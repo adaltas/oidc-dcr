@@ -91,6 +91,19 @@ metadata:
   name: dcr
   labels:
     app: dcr
+  annotations:
+    # Hooks are added to the job to ensure that:
+    #   - The job is executed after the chart is installed, upgraded or synced
+    #   - ArgoCD does not expect the job to exist after it's execution
+    #   - The job is executed before the next hook is executed (if any)
+    #   - The job is deleted if it still exists when the chart is upgraded or uninstalled
+    # ArgoCD hooks
+    "argocd.argoproj.io/hook": PostSync
+    "argocd.argoproj.io/hook-delete-policy": BeforeHookCreation
+    # Helm hooks
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation
 spec:
   backoffLimit: 1
   ttlSecondsAfterFinished: {{ .Values.ttl_seconds }}
@@ -125,3 +138,4 @@ spec:
             defaultMode: 493
             name: dcr
       restartPolicy: Never
+
