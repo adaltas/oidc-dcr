@@ -1,0 +1,192 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Values Schema for OIDC DCR Helm Chart",
+  "type": "object",
+  "properties": {
+    "image": {
+      "type": "string",
+      "description": "Name of the image used to run the DCR script.",
+      "default": "alpine:latest"
+    },
+    "registration_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "OIDC provider registration URL."
+    },
+    "request": {
+      "type": "object",
+      "description": "DCR information used to build the JSON request payload.",
+      "properties": {
+        "redirect_uris": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "format": "uri" }
+        },
+        "response_types": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "code",
+              "id_token",
+              "token",
+              "id_token token",
+              "code id_token",
+              "code token",
+              "code id_token token"
+            ]
+          }
+        },
+        "grant_types": {
+          "type": "array",
+          "uniqueItems": true,
+          "default": ["authorization_code"],
+          "items": {
+            "type": "string",
+            "enum": [
+              "authorization_code",
+              "implicit",
+              "refresh_token",
+              "client_credentials"
+            ]
+          }
+        },
+        "application_type": {
+          "type": "string",
+          "enum": ["web", "native"],
+          "default": "web"
+        },
+        "contacts": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "format": "email" }
+        },
+        "client_name": { "type": "string" },
+        "logo_uri": { "type": "string", "format": "uri" },
+        "client_uri": { "type": "string", "format": "uri" },
+        "policy_uri": { "type": "string", "format": "uri" },
+        "tos_uri": { "type": "string", "format": "uri" },
+        "jwks_uri": { "type": "string", "format": "uri" },
+        "jwks": { "type": "object" },
+        "sector_identifier_uri": { "type": "string", "format": "uri" },
+        "subject_type": {
+          "type": "string",
+          "enum": ["public", "pairwise"]
+        },
+        "id_token_signed_response_alg": {
+          "type": "string",
+          "default": "RS256"
+        },
+        "id_token_encrypted_response_alg": { "type": "string" },
+        "id_token_encrypted_response_enc": { "type": "string" },
+        "userinfo_signed_response_alg": { "type": "string" },
+        "userinfo_encrypted_response_alg": { "type": "string" },
+        "userinfo_encrypted_response_enc": { "type": "string" },
+        "request_object_signing_alg": { "type": "string" },
+        "request_object_encryption_alg": { "type": "string" },
+        "request_object_encryption_enc": { "type": "string" },
+        "token_endpoint_auth_method": {
+          "type": "string",
+          "enum": [
+            "client_secret_post",
+            "client_secret_basic",
+            "client_secret_jwt",
+            "private_key_jwt",
+            "none"
+          ],
+          "default": "client_secret_basic"
+        },
+        "token_endpoint_auth_signing_alg": { "type": "string" },
+        "default_max_age": { "type": "integer", "minimum": 0 },
+        "require_auth_time": { "type": "boolean" },
+        "default_acr_values": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string" }
+        },
+        "initiate_login_uri": { "type": "string", "format": "uri" },
+        "request_uris": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "format": "uri" }
+        }
+      },
+      "additionalProperties": false,
+      "required": ["redirect_uris"],
+      "default": {}
+    },
+    "secret": {
+      "type": "string",
+      "description": "Name of the secret being created."
+    },
+    "security": {
+      "type": "object",
+      "properties": {
+        "service_account": { "type": "string" },
+        "role": { "type": "string" }
+      },
+      "additionalProperties": false,
+      "default": {}
+    },
+    "ttl_seconds": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 0
+    },
+    "mapping": {
+      "type": "object",
+      "properties": {
+        "use_default": { "type": "boolean", "default": true },
+        "key_mapping": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "default": {
+            "registration_client_uri": ".registration_client_uri",
+            "registration_access_token": ".registration_access_token"
+          }
+        },
+        "default_keys": {
+          "type": "object",
+          "description": "Internal static map for variations. Locked to default values.",
+          "properties": {
+            "client_id": { "const": ".client_id" },
+            "client-id": { "const": ".client_id" },
+            "clientId": { "const": ".client_id" },
+            "ClientId": { "const": ".client_id" },
+            "ClientID": { "const": ".client_id" },
+            "clientid": { "const": ".client_id" },
+            "CLIENTID": { "const": ".client_id" },
+            "oidc_client_id": { "const": ".client_id" },
+            "oidc-client-id": { "const": ".client_id" },
+            "oidcClientId": { "const": ".client_id" },
+            "OIDC_CLIENT_ID": { "const": ".client_id" },
+            "CLIENT_ID": { "const": ".client_id" },
+            "CLIENTID: ": { "const": ".client_id" },
+            "Client_ID": { "const": ".client_id" },
+            "client_secret": { "const": ".client_secret" },
+            "client-secret": { "const": ".client_secret" },
+            "clientSecret": { "const": ".client_secret" },
+            "ClientSecret": { "const": ".client_secret" },
+            "clientsecret": { "const": ".client_secret" },
+            "oidc_client_secret": { "const": ".client_secret" },
+            "oidc-client-secret": { "const": ".client_secret" },
+            "oidcClientSecret": { "const": ".client_secret" },
+            "OIDC_CLIENT_SECRET": { "const": ".client_secret" },
+            "CLIENT_SECRET": { "const": ".client_secret" },
+            "CLIENTSECRET": { "const": ".client_secret" },
+            "Client_Secret": { "const": ".client_secret" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "global": {
+      "type": "object",
+      "description": "Global values injected by Helm/ArgoCD umbrella structures."
+    }
+  },
+  "additionalProperties": false,
+  "required": ["registration_url", "request"]
+}
