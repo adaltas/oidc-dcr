@@ -2,6 +2,8 @@
 
 ArgoCD OIDC integration allows users to connect to the application using an external OpenID Connect (OIDC) identity provider. This process is automated using the OIDC-DCR chart.
 
+Since ArgoCD does not natively support dynamic `client_id` injection via environment variables or external secrets, a Kubernetes Job acts as a middleware between the DCR job and the ArgoCD configmap.
+
 ## Chart configuration
 
 `oidc-dcr` chart is added as a dependency to the main chart alongside ArgoCD.
@@ -71,9 +73,7 @@ oidc-dcr:
 
 ## Patch job
 
-Since ArgoCD does not natively support dynamic `client_id` injection via environment variables or external secrets, a Kubernetes Job acts as a middleware.
-
-This job is created in a `templates/argocd-cm-patch.yaml` file
+A patch job is defined in `templates/argocd-cm-patch.yaml` to bridge the gap between the DCR job (which generates a dynamic `client_id`) and ArgoCD (which does not natively support values injections for other variables than `client_secret`).
 
 This job executes post-installation or post-upgrade. It waits for the `oidc-dcr` job to generate the required secret, extracts the generated Client ID and Client Secret, and directly patches the `argocd-cm` ConfigMap.
 
@@ -84,7 +84,9 @@ metadata:
   name: argocd-cm-patcher
   namespace: argocd
   annotations:
+    # The job is executed right after the Helm install/upgrade command (but after the DCR job, which has a hook weight giving it higher priority).
     helm.sh/hook: post-install,post-upgrade
+    # Ensure that Helm correctly handles the job deletion after execution, or replaces it when the job is re-created in case of error.
     helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 spec:
   template:
