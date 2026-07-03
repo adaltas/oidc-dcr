@@ -1,12 +1,12 @@
-# Example - ArgoCD
+# Example - Argo CD
 
-ArgoCD OIDC integration allows users to connect to the application using an external OpenID Connect (OIDC) identity provider. This process is automated using the OIDC-DCR chart.
+Argo CD OIDC integration allows users to connect to the application using an Argo CD OpenID Connect (OIDC) identity provider. This process is automated using the OIDC-DCR chart.
 
-An `argocd-cm-patch` job is introduced to read the generated client ID and insert it into the Argo CD's ConfigMap as ArgoCD does not natively support injecting a ClientID directly from an external secret or environment variable. Because the DCR job has a Helm hook weight of -5, it executes with higher priority. Therefore, when the patch job runs, the Kubernetes secret is already available, allowing it to extract the `client_id` and `client_secret` and inject them directly into the ArgoCD ConfigMap.
+An `argocd-cm-patch` job is introduced to read the generated client ID and insert it into the Argo CD's ConfigMap as Argo CD does not natively support injecting a ClientID directly from an external secret or environment variable. Because the DCR job has a Helm hook weight of -5, it executes with higher priority. Therefore, when the patch job runs, the Kubernetes secret is already available, allowing it to extract the `client_id` and `client_secret` and inject them directly into the Argo CD ConfigMap.
 
 ## Chart configuration
 
-`oidc-dcr` chart is added as a dependency to the main chart alongside ArgoCD.
+`oidc-dcr` chart is added as a dependency to the main chart alongside Argo CD.
 
 ```yaml
 apiVersion: v2
@@ -23,15 +23,15 @@ dependencies:
 
 ## Values file
 
-Because this is a multi-dependency chart, the configuration keys for both ArgoCD and OIDC-DCR must be nested under their respective parent chart names.
+Because this is a multi-dependency chart, the configuration keys for both Argo CD and OIDC-DCR must be nested under their respective parent chart names.
 
-### ArgoCD configuration (RBAC)
+### Argo CD configuration (RBAC)
 
 To allow users authenticating via OIDC to interact with the application, appropriate permissions must be defined in the values file.
 
 The `policy.csv` key, under `configs.rbac`, defines the access policies. The scopes setting specifies which token claim (such as [email]) will be evaluated against the second column of the RBAC policy.
 
-Read the [official ArgoCD documentation about RBAC Configuration](https://argo-cd.readthedocs.io/en/stable/operator-manual/rbac/) to learn more.
+Read the [official Argo CD documentation about RBAC Configuration](https://argo-cd.readthedocs.io/en/stable/operator-manual/rbac/) to learn more.
 
 ```yaml
 argo-cd:
@@ -48,7 +48,7 @@ argo-cd:
 A minimal configuration is required for the OIDC-DCR component to handle dynamic client registration:
 
 - The `registration_url` value must be set to the dynamic client registration URL provided by your OIDC identity provider.
-- The `request` key must be filled with the `redirect_uris` that indicates the ArgoCD callback url (see example below).
+- The `request` key must be filled with the `redirect_uris` that indicates the Argo CD callback url (see example below).
 - The `secret` must be set to `argo-dcr` to match the target name used by the patch job in the next section.
 - The `use_default` value needs to be set to `true` OR the `client_id` and `client_secret` values needs to be manually set to `.client_id` and `.client_secret`.
 
@@ -73,7 +73,7 @@ oidc-dcr:
 
 ## Patch job
 
-Since ArgoCD does not natively support dynamic `client_id` injection via environment variables or external secrets, a Kubernetes Job is defined in `templates/argocd-cm-patch.yaml` and acts as a middleware between the DCR job and the ArgoCD configmap.
+Since Argo CD does not natively support dynamic `client_id` injection via environment variables or external secrets, a Kubernetes Job is defined in `templates/argocd-cm-patch.yaml` and acts as a middleware between the DCR job and the Argo CD configmap.
 
 This job executes post-installation or post-upgrade. It waits for the `oidc-dcr` job to generate the required secret, extracts the generated Client ID and Client Secret, and directly patches the `argocd-cm` ConfigMap.
 
