@@ -54,4 +54,4 @@ jobs:
       - name: Push chart to Quay (OCI)
         run: |
           CHART_PACKAGE=$(ls .dist/*.tgz)
-          helm push "$CHART_PACKAGE" oci://quay.io/jhavet404
+          helm push "$CHART_PACKAGE" oci://quay.io/adaltas
