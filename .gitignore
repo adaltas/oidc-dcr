@@ -1,3 +1,5 @@
 .*
+!.github
 !.gitignore
 !.helmignore
+!.release-please-manifest.json
