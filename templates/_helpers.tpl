@@ -19,3 +19,27 @@
 {{ $key }}: {{ $val | quote }}
 {{- end }}
 {{- end -}}
+
+{{- define "curl.option" -}}
+{{- $curlOpt := "-s" -}}
+{{- if .Values.tls.insecure -}}
+{{- $curlOpt = "-sk" -}}
+{{- end -}}
+{{- $curlOpt }}
+{{- end -}}
+
+{{- define "volume_mount.secret" -}}
+{{- if and (not .Values.tls.insecure) (ne .Values.tls.certificate "") -}}
+- name: ca-volume
+  mountPath: /usr/local/share/ca-certificates/ca.crt
+  subPath: ca.crt
+{{- end -}}
+{{- end -}}
+
+{{- define "volume.secret" -}}
+{{- if and (not .Values.tls.insecure) (ne .Values.tls.certificate "") -}}
+- name: ca-volume
+  secret:
+    secretName: {{ $.Values.tls.certificate }}
+{{- end -}}
+{{- end -}}

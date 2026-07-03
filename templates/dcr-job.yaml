@@ -58,9 +58,18 @@ spec:
               value: {{ .Values.request | toJson | quote }}
             - name: SECRET_KEYS
               value: {{ include "secret.keys" . | fromYaml | toJson | quote }}
+            - name: CURL_OPTION
+              value: {{ include "curl.option" . | quote }}
+            {{- if (ne .Values.tls.certificate "") }}
+            - name: TLS_CERTIFICATE
+              value: {{ .Values.tls.certificate | quote }}
+            {{- end }}
           volumeMounts:
             - name: dcr-volume
               mountPath: /mnt/dcr
+              {{- if include "volume_mount.secret" . }}
+              {{- include "volume_mount.secret" . | nindent 12 -}}
+              {{- end }}
           ports:
             - containerPort: 80
               name: http
@@ -71,5 +80,8 @@ spec:
           configMap:
             defaultMode: 493
             name: dcr
+        {{- if include "volume.secret" . }}
+        {{- include "volume.secret" . | nindent 8 -}}
+        {{- end }}
       restartPolicy: Never
 

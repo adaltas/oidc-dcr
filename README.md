@@ -55,6 +55,13 @@ The chart creates a Kubernetes Job that executes a bash script to perform the dy
   - `token_endpoint_auth_method`  
     Authentication method used by the client at the token endpoint. Supported values include `client_secret_basic`, `client_secret_post`, `client_secret_jwt`, `private_key_jwt`, and `none`. Using none creates a public client (client without secret) (Default: `client_secret_basic`)
 
+- `tls`
+  Use of TLS in client creation via the DCR API.
+  - `insecure`
+    Use the `insecure` option of the `curl` command. Supported values are `true` or `false`. (Default: `false`)
+  - `certificate` 
+     Mount a secret into DCR jobs. Value needs to match the name of an accessible secret.
+
 - `secret`  
   Control the name for the created Kubernetes Secret. If left empty, the Helm chart name is used.
 
