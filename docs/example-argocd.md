@@ -2,7 +2,7 @@
 
 ArgoCD OIDC integration allows users to connect to the application using an external OpenID Connect (OIDC) identity provider. This process is automated using the OIDC-DCR chart.
 
-This integration resolves an incompatibility: the DCR protocol generates a random `client_id` (in UUIDv4 format) that is stored in a Kubernetes Secret by the `dcr` job, but ArgoCD's values file does not natively support injecting a ClientID directly from an external secret or environment variable. To bridge this gap, an `argocd-cm-patch` job acts as a middleware, using Helm hooks to trigger at the end of the chart installation alongside the DCR job. Because the DCR job has a Helm hook weight of -5, it executes with higher priority. Therefore, when the patch job runs, the Kubernetes secret is already available, allowing it to extract the `client_id` and `client_secret` and inject them directly into the ArgoCD ConfigMap.
+An `argocd-cm-patch` job is introduced to read the generated client ID and insert it into the Argo CD's ConfigMap as ArgoCD does not natively support injecting a ClientID directly from an external secret or environment variable. Because the DCR job has a Helm hook weight of -5, it executes with higher priority. Therefore, when the patch job runs, the Kubernetes secret is already available, allowing it to extract the `client_id` and `client_secret` and inject them directly into the ArgoCD ConfigMap.
 
 ## Chart configuration
 
