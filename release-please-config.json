@@ -1,0 +1,11 @@
+{
+  "bump-minor-pre-major": true,
+  "packages": {
+    ".": {
+      "component": "oidc-dcr",
+      "include-component-in-tag": false,
+      "release-type": "helm",
+      "initial-version": "0.1.0"
+    }
+  }
+}
