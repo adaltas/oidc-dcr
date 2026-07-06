@@ -1,0 +1,205 @@
+suite: TLS configuration
+templates:
+  - dcr-job.yaml
+tests:
+  - it: "should set TLS certificate and mount CA volume when https protocol
+         is used, insecure is false and certificate is defined"
+    set:
+      registration_url: "https://example.com"
+      request:
+        application_type: native
+        client_name: client-name
+        redirect_uris:
+          - "https://example.com/oauth2/callback"
+      tls.insecure: false
+      tls.certificate: "cert"
+    asserts:
+      - documentIndex: 2
+        contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CURL_OPTION
+            value: "-s"
+      - documentIndex: 2
+        contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: TLS_CERTIFICATE
+            value: "cert"
+      - documentIndex: 2
+        contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: ca-volume
+            mountPath: /usr/local/share/ca-certificates/ca.crt
+            subPath: ca.crt
+      - documentIndex: 2
+        contains:
+          path: spec.template.spec.volumes
+          content:
+            name: ca-volume
+            secret:
+              secretName: "cert"
+
+  - it: "should not set TLS certificate nor mount CA volume when http protocol
+         is used, insecure is false and certificate is undefined"
+    set:
+      registration_url: "http://example.com"
+      request:
+        application_type: native
+        client_name: client-name
+        redirect_uris:
+          - "http://example.com/oauth2/callback"
+      tls.insecure: false
+      tls.certificate: ""
+    asserts:
+      - documentIndex: 2
+        contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CURL_OPTION
+            value: "-s"
+      - documentIndex: 2
+        notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: TLS_CERTIFICATE
+          any: true
+      - documentIndex: 2
+        notContains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: ca-volume
+            mountPath: /usr/local/share/ca-certificates/ca.crt
+            subPath: ca.crt
+      - documentIndex: 2
+        notContains:
+          path: spec.template.spec.volumes
+          content:
+            name: ca-volume
+            secret:
+              secretName: "cert"
+
+  - it: "should skip TLS verification and not mount certificate when https 
+         protocol is used, insecure is true and certificate is undefined"
+    set:
+      registration_url: "https://example.com"
+      request:
+        application_type: native
+        client_name: client-name
+        redirect_uris:
+          - "https://example.com/oauth2/callback"
+      tls.insecure: true
+      tls.certificate: ""
+    asserts:
+      - documentIndex: 2
+        contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CURL_OPTION
+            value: "-sk"
+      - documentIndex: 2
+        notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: TLS_CERTIFICATE
+          any: true
+      - documentIndex: 2
+        notContains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: ca-volume
+            mountPath: /usr/local/share/ca-certificates/ca.crt
+            subPath: ca.crt
+      - documentIndex: 2
+        notContains:
+          path: spec.template.spec.volumes
+          content:
+            name: ca-volume
+            secret:
+              secretName: "cert"
+
+  - it: "should not set TLS certificate nor mount CA volume when https protocol
+         is used, insecure is false and certificate is undefined"
+    set:
+      registration_url: "https://example.com"
+      request:
+        application_type: native
+        client_name: client-name
+        redirect_uris:
+          - "https://example.com/oauth2/callback"
+      tls.insecure: false
+      tls.certificate: ""
+    asserts:
+      - documentIndex: 2
+        contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CURL_OPTION
+            value: "-s"
+      - documentIndex: 2
+        notContains:
+          path: spec.template.spec.containers[0].env
+          containt:
+            name: TLS_CERTIFICATE
+          any: true
+      - documentIndex: 2
+        notContains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            name: ca-volume
+            mountPath: /usr/local/share/ca-certificates/ca.crt
+            subPath: ca.crt
+          any: true
+      - documentIndex: 2
+        notContains:
+          path: spec.template.spec.volumes
+          content:
+            name: ca-volume
+            secret:
+              secretName: "cert"
+          any: true
+
+  - it: "should fail schema validation when certificate is defined 
+         while insecure is true and the https protocol is used"
+    set:
+      registration_url: "https://example.com"
+      request:
+        application_type: native
+        client_name: client-name
+        redirect_uris:
+          - "https://example.com/oauth2/callback"
+      tls.insecure: true
+      tls.certificate: "cert"
+    asserts:
+      - failedTemplate:
+          errorPattern: "at '/tls/certificate': value must be ''"
+
+  - it: "should fail schema validation when certificate is defined 
+         while insecure is false and the http protocol is used"
+    set:
+      registration_url: "http://example.com"
+      request:
+        application_type: native
+        client_name: client-name
+        redirect_uris:
+          - "http://example.com/oauth2/callback"
+      tls.insecure: false
+      tls.certificate: "cert"
+    asserts:
+      - failedTemplate:
+          errorPattern: "at '/tls/certificate': value must be ''"
+
+  - it: "should fail schema validation when insecure=true 
+         is used with http protocol"
+    set:
+      registration_url: "http://example.com"
+      request:
+        application_type: native
+        client_name: client-name
+        redirect_uris:
+          - "http://example.com/oauth2/callback"
+      tls.insecure: true
+    asserts:
+      - failedTemplate:
+          errorPattern: "at '/tls/insecure': value must be false"

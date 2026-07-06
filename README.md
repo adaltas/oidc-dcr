@@ -123,6 +123,17 @@ On top of those standard fields, the DCR response also includes keykloak-specifi
 > [!NOTE]
 > `registration_client_uri` and `registration_access_token` fields are mapped even if `use_default` is set to `false` to allow the script to automatically detect the registration of the client in case the job is restarted.
 
+## Test
+
+This chart uses [Helm Unittest](https://github.com/helm-unittest/helm-unittest#get-started) to execute unit tests. 
+
+Run the following command to execute the tests
+```bash
+helm template .
+```
+
+All the tests are located in the `tests/` folder
+
 ## Keycloak Notes
 
 Some DCR fields are not supported by Keybase (e.g., `contacts`). Those fields can still be included in the `request` section but will be ignored by Keycloak and won't be present in the response.
