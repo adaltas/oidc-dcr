@@ -59,7 +59,11 @@ spec:
             - name: SECRET_KEYS
               value: {{ include "secret.keys" . | fromYaml | toJson | quote }}
             - name: CURL_OPTION
-              value: {{ include "curl.option" . | quote }}
+              {{- if .Values.tls.insecure }}
+              value: "-sk"
+              {{- else }}
+              value: "-s"
+              {{- end }}
             {{- if (ne .Values.tls.certificate "") }}
             - name: TLS_CERTIFICATE
               value: {{ .Values.tls.certificate | quote }}
