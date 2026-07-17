@@ -128,11 +128,12 @@ On top of those standard fields, the DCR response also includes keykloak-specifi
 This chart uses [Helm Unittest](https://github.com/helm-unittest/helm-unittest#get-started) to execute unit tests. 
 
 Run the following command to execute the tests
+
 ```bash
 helm template .
 ```
 
-All the tests are located in the `tests/` folder
+All the tests are located in the `tests` folder.
 
 ## Keycloak Notes
 
