@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env ash
 
 # Dependencies installation
 apk add curl jq bind-tools kubectl
