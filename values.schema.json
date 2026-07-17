@@ -197,39 +197,38 @@
   },
   "additionalProperties": false,
   "required": ["registration_url", "request"],
-  "if": {
-    "properties": {
-      "registration_url": { "pattern": "^http://" }
-    }
-  },
-  "then": {
-    "properties": {
-      "tls": {
-        "properties": {
-          "insecure": { "const": false },
-          "certificate": { "const": "" }
-        }
-      }
-    }
-  },
-  "else": {
-    "if": {
+  "oneOf": [
+    {
       "properties": {
+        "registration_url": { "pattern": "^http://" },
         "tls": {
           "properties": {
-            "insecure": { "const": true }
-          }
-        }
-      }
-    },
-    "then": {
-      "properties": {
-        "tls": {
-          "properties": {
+            "insecure": { "const": false },
             "certificate": { "const": "" }
           }
         }
       }
+    },
+    {
+      "properties": {
+        "registration_url": { "pattern": "^https://" },
+        "tls": {
+          "properties": {
+            "insecure": { "const": true },
+            "certificate": { "const": "" }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "registration_url": { "pattern": "^https://" },
+        "tls": {
+          "properties": {
+            "insecure": { "const": false }
+          }
+        }
+      }
     }
-  }
+  ]
 }
