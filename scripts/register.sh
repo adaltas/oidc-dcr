@@ -3,9 +3,10 @@
 # Dependencies installation
 apk add curl jq bind-tools kubectl
 if [[ -n $TLS_CERTIFICATE ]]; then
-apk add ca-certificates
-update-ca-certificates 
+  apk add ca-certificates
+  update-ca-certificates
 fi
+
 # Current registration detection
 secret=$(kubectl get secret "$SECRET_NAME" -o json 2>/dev/null)
 if [[ -n "$secret" ]] >/dev/null; then
@@ -15,7 +16,7 @@ if [[ -n "$secret" ]] >/dev/null; then
       -H "Authorization: Bearer $(
         echo "$secret" | jq -r '.data.registration_access_token | @base64d'
       )" \
-      $(echo "$secret" | jq -r '.data.registration_client_uri | @base64d')
+      "$(echo "$secret" | jq -r '.data.registration_client_uri | @base64d')"
   )
   if [[ $? == "0" ]] && ! echo "$response" | jq -er '.error'; then
     echo 'INFO: Client is already registered in the OIDC provider.'
@@ -24,15 +25,15 @@ if [[ -n "$secret" ]] >/dev/null; then
   fi
   echo 'INFO: Secret information for client exists but is not valid.'
 fi
-echo 'INFO: DCR registration'
+
 # DCR registration
+echo 'INFO: DCR registration'
 echo 'INFO: Request body'
 echo "$REQUEST" | jq . # Log the request for debugging purposes
 response=$(curl "$CURL_OPTION" \
   -H "Content-Type:application/json" \
   -d "$REQUEST" \
   "$DCR_REGISTRATION_URL")
-
 [[ $? != "0" ]] && {
   >&2 echo "ERROR: Client registration HTTP request failed with exit code $?."
   exit 1
@@ -42,6 +43,7 @@ echo 'INFO: Client registration successful.'
 echo 'INFO: DCR response'
 echo "$response" | jq . # Log the response for debugging purposes
 echo 'INFO: Secret information storage'
+
 # Secret information storage
 # The manifest is generated using the secret_keys variable
 # The values that start with a dot will extract the value from the DCR response, otherwise it will use the hard-coded value
