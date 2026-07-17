@@ -2,7 +2,7 @@
 
 # Dependencies installation
 apk add curl jq bind-tools kubectl
-if [[ -n $TLS_CERTIFICATE ]]; then
+if [[ -n "$TLS_CERTIFICATE" ]]; then
   apk add ca-certificates
   update-ca-certificates
 fi
