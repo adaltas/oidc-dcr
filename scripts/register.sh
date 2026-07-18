@@ -1,15 +1,15 @@
-#!/usr/bin/env ash
+#!/usr/bin/env sh
 
 # Dependencies installation
 apk add curl jq bind-tools kubectl
-if [[ -n "$TLS_CERTIFICATE" ]]; then
+if [ -n "$TLS_CERTIFICATE" ]; then
   apk add ca-certificates
   update-ca-certificates
 fi
 
 # Current registration detection
 secret=$(kubectl get secret "$SECRET_NAME" -o json 2>/dev/null)
-if [[ -n "$secret" ]] >/dev/null; then
+if [ -n "$secret" ] >/dev/null; then
   response=$(
     curl "$CURL_OPTION" \
       -H "Content-Type:application/json" \
@@ -18,7 +18,7 @@ if [[ -n "$secret" ]] >/dev/null; then
       )" \
       "$(echo "$secret" | jq -r '.data.registration_client_uri | @base64d')"
   )
-  if [[ $? == "0" ]] && ! echo "$response" | jq -er '.error'; then
+  if [ $? = "0" ] && ! echo "$response" | jq -er '.error'; then
     echo 'INFO: Client is already registered in the OIDC provider.'
     # The registration access token is still unchanged because no change was made to the client
     exit 0
@@ -34,7 +34,7 @@ response=$(curl "$CURL_OPTION" \
   -H "Content-Type:application/json" \
   -d "$REQUEST" \
   "$DCR_REGISTRATION_URL")
-[[ $? != "0" ]] && {
+[ $? != "0" ] && {
   >&2 echo "ERROR: Client registration HTTP request failed with exit code $?."
   exit 1
 }
@@ -61,10 +61,10 @@ manifest=$(
   '
 )
 token=$(cat /run/secrets/kubernetes.io/serviceaccount/token)
-echo "$manifest" | kubectl apply --token="$token" -f -
-[[ $? != "0" ]] && {
+if ! echo "$manifest" | kubectl apply --token="$token" -f -; then
   >&2 echo "ERROR: Secret creation failed with exit code $?."
   exit 1
-}
+fi
+
 # Success
 echo 'INFO: Client is now registered in the OIDC provider.'
