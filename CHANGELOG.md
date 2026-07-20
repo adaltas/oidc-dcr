@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/adaltas/oidc-dcr/compare/v0.1.0...v0.2.0) (2026-07-20)
+
+
+### Features
+
+* enabling insecure api call and certificate import in dcr job ([#10](https://github.com/adaltas/oidc-dcr/issues/10)) ([cdc2d51](https://github.com/adaltas/oidc-dcr/commit/cdc2d510a27c668a20f01cb6c337744e00dc9ea2))
+
 ## 0.1.0 (2026-07-03)
 
 
