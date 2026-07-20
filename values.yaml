@@ -5,6 +5,10 @@ image: alpine:latest
 registration_url: ""
 # DCR information use to build the JSON request
 request: {}
+# Informations use to call DCR API
+tls: 
+  insecure: false # Call the DCR API using insecure option of the curl command
+  certificate: "" # Provide a certificate to DCR job using an accessible secret
 # Name of the secret being created, default is the chart name
 secret: ""
 security:

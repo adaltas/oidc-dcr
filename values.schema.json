@@ -116,6 +116,14 @@
       "required": ["redirect_uris"],
       "default": {}
     },
+    "tls": {
+      "type": "object",
+      "properties": {
+        "insecure": { "type": "boolean", "default": false},
+        "certificate": { "type": "string", "default": ""}
+      },
+      "additionalProperties": false
+    },
     "secret": {
       "type": "string",
       "description": "Name of the secret being created."
@@ -188,5 +196,39 @@
     }
   },
   "additionalProperties": false,
-  "required": ["registration_url", "request"]
+  "required": ["registration_url", "request"],
+  "oneOf": [
+    {
+      "properties": {
+        "registration_url": { "pattern": "^http://" },
+        "tls": {
+          "properties": {
+            "insecure": { "const": false },
+            "certificate": { "const": "" }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "registration_url": { "pattern": "^https://" },
+        "tls": {
+          "properties": {
+            "insecure": { "const": true },
+            "certificate": { "const": "" }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "registration_url": { "pattern": "^https://" },
+        "tls": {
+          "properties": {
+            "insecure": { "const": false }
+          }
+        }
+      }
+    }
+  ]
 }
