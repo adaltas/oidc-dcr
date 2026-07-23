@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.3.0](https://github.com/adaltas/oidc-dcr/compare/v0.2.0...v0.3.0) (2026-07-23)
+
+
+### Features
+
+* enabled property ([dbb56d2](https://github.com/adaltas/oidc-dcr/commit/dbb56d214df6e3d086eb407bd1f8df61549cc8f7))
+
+
+### Bug Fixes
+
+* execution hook order ([#12](https://github.com/adaltas/oidc-dcr/issues/12)) ([a73e8ca](https://github.com/adaltas/oidc-dcr/commit/a73e8ca23dd1fce0d0c0d2ea8dae2b240e22e404))
+
 ## [0.2.0](https://github.com/adaltas/oidc-dcr/compare/v0.1.0...v0.2.0) (2026-07-20)
 
 
