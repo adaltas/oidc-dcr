@@ -21,7 +21,6 @@ All the DCR-related resources (ConfigMap, Service, ServiceAccount, Role, RoleBin
 
 - Validate/enrich the configuration
 - Respect Helm documentation best-practices
-- Helm test best practices
 - Fix error "Resource not found in cluster" in Argo CD
 - Externalise the script to an external file
 - Any other Helm best practices
