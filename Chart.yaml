@@ -2,4 +2,4 @@ apiVersion: v2
 name: oidc-dcr
 description: Keycloak Dynamic Client Registration (DCR)
 type: application
-version: 0.3.0
+version: 0.3.1
