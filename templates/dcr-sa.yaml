@@ -2,11 +2,33 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: {{ include "service_account.name" . | quote }}
+  annotations:
+    # Hooks are added to ensure that:
+    #   - The DCR related ressources are created before the job is executed
+    #   - The job is executed before the main chart is installed, upgraded or synced
+    #   - ArgoCD does not expect the job to exist after it's execution
+    #   - The DCR related ressources and the DCR job are created or executed before any other hook (if any)
+    #   - The job is deleted if it still exists when the chart is upgraded or uninstalled
+    # ArgoCD hook
+    "argocd.argoproj.io/hook": PreSync
+    "argocd.argoproj.io/hook-delete-policy": BeforeHookCreation
+    # Helm hook
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-10"
+    "helm.sh/hook-delete-policy": before-hook-creation
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: {{ include "role.name" . | quote }}
+  annotations:
+    # ArgoCD hook
+    "argocd.argoproj.io/hook": PreSync
+    "argocd.argoproj.io/hook-delete-policy": BeforeHookCreation
+    # Helm hook
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-10"
+    "helm.sh/hook-delete-policy": before-hook-creation
 rules:
 - apiGroups: [""] # "" indicates the core API group
   resources: ["secrets"]
@@ -16,6 +38,14 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: dcr
+  annotations:
+    # ArgoCD hook
+    "argocd.argoproj.io/hook": PreSync
+    "argocd.argoproj.io/hook-delete-policy": BeforeHookCreation
+    # Helm hook
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-10"
+    "helm.sh/hook-delete-policy": before-hook-creation
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
