@@ -1,3 +1,5 @@
+# Placeholder property to use when defining this chart as a depencency in an umbrela chart.
+enabled: true
 # Name of the Alpine image used to run the script
 image: alpine:latest
 # OIDC provider registration URL.
@@ -6,7 +8,7 @@ registration_url: ""
 # DCR information use to build the JSON request
 request: {}
 # Informations use to call DCR API
-tls: 
+tls:
   insecure: false # Call the DCR API using insecure option of the curl command
   certificate: "" # Provide a certificate to DCR job using an accessible secret
 # Name of the secret being created, default is the chart name
