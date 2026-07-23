@@ -35,3 +35,33 @@
     secretName: {{ $.Values.tls.certificate }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+  Hooks are added to ensure that:
+    - The DCR related resources are created before the job is executed
+    - The job is executed before the main chart is installed, upgraded or synced
+    - ArgoCD does not expect the job to exist after its execution
+    - The DCR related resources and the DCR job are created or executed before any other hook (if any)
+    - The job is deleted if it still exists when the chart is upgraded or uninstalled
+*/}}
+{{- define "hooks.ressources" -}}
+# ArgoCD hooks
+"argocd.argoproj.io/hook": PreSync
+"argocd.argoproj.io/sync-wave": "-10"
+"argocd.argoproj.io/hook-delete-policy": BeforeHookCreation
+# Helm hook
+"helm.sh/hook": pre-install,pre-upgrade
+"helm.sh/hook-weight": "-10"
+"helm.sh/hook-delete-policy": before-hook-creation
+{{- end -}}
+
+{{- define "hooks.job" -}}
+# ArgoCD hooks
+"argocd.argoproj.io/hook": PreSync
+"argocd.argoproj.io/sync-wave": "-5"
+"argocd.argoproj.io/hook-delete-policy": BeforeHookCreation
+# Helm hooks
+"helm.sh/hook": pre-install,pre-upgrade
+"helm.sh/hook-weight": "-5"
+"helm.sh/hook-delete-policy": before-hook-creation
+{{- end -}}

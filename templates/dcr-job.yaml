@@ -2,6 +2,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: dcr-headless
+  annotations:
+{{ include "hooks.ressources" . | indent 4 }}
 spec:
   clusterIP: None
   selector:
@@ -15,6 +17,8 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: dcr
+  annotations:
+{{ include "hooks.ressources" . | indent 4 }}
 data:
   register.sh: |
 {{ .Files.Get "scripts/register.sh" | indent 4 }}
@@ -26,18 +30,7 @@ metadata:
   labels:
     app: dcr
   annotations:
-    # Hooks are added to the job to ensure that:
-    #   - The job is executed after the chart is installed, upgraded or synced
-    #   - ArgoCD does not expect the job to exist after it's execution
-    #   - The job is executed before the next hook is executed (if any)
-    #   - The job is deleted if it still exists when the chart is upgraded or uninstalled
-    # ArgoCD hooks
-    "argocd.argoproj.io/hook": PostSync
-    "argocd.argoproj.io/hook-delete-policy": BeforeHookCreation
-    # Helm hooks
-    "helm.sh/hook": post-install,post-upgrade
-    "helm.sh/hook-weight": "-5"
-    "helm.sh/hook-delete-policy": before-hook-creation
+{{ include "hooks.job" . | indent 4 }}
 spec:
   backoffLimit: 1
   ttlSecondsAfterFinished: {{ .Values.ttl_seconds }}
@@ -88,4 +81,3 @@ spec:
         {{- include "volume.secret" . | nindent 8 -}}
         {{- end }}
       restartPolicy: Never
-
