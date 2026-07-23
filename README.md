@@ -6,6 +6,12 @@ The `oidc-dcr` chart provides automatic client's registration with OIDC provider
 
 The chart creates a Kubernetes Job that executes a bash script to perform the dynamic client registration. The script sends a JSON payload to the specified HTTP DCR registration endpoint and processes the response to extract relevant information (like client ID and secret). This information is then stored in a Kubernetes Secret for use by other applications.
 
+## Chart execution
+
+To ensure the DCR registration is executed before the main application deployment and to be able to orchestrate the execution order, the chart set [Helm](https://helm.sh/docs/topics/charts_hooks/) and [Argo CD](https://argo-cd.readthedocs.io/en/stable/user-guide/sync-waves/) orchestrations hooks to `pre-install`/`pre-upgrade` for Helm and `PreSync` for Argo CD.
+
+All the DCR-related resources (ConfigMap, Service, ServiceAccount, Role, RoleBinding) are created in first. Then, the Job is executed using all the ressources previously created. The Job still have a negative hook-weight ensuring any other `pre-install`/`pre-upgrade` or `PreSync` job from the main chart is executed after.
+
 ## Roadmap
 
 - Validate/enrich the configuration
@@ -59,8 +65,8 @@ The chart creates a Kubernetes Job that executes a bash script to perform the dy
   Use of TLS in client creation via the DCR API.
   - `insecure`
     Use the `insecure` option of the `curl` command. Supported values are `true` or `false`. (Default: `false`)
-  - `certificate` 
-     Mount a secret into DCR jobs. Value needs to match the name of an accessible secret.
+  - `certificate`
+    Mount a secret into DCR jobs. Value needs to match the name of an accessible secret.
 
 - `secret`  
   Control the name for the created Kubernetes Secret. If left empty, the Helm chart name is used.
@@ -125,7 +131,7 @@ On top of those standard fields, the DCR response also includes keykloak-specifi
 
 ## Test
 
-This chart uses [Helm Unittest](https://github.com/helm-unittest/helm-unittest#get-started) to execute unit tests. 
+This chart uses [Helm Unittest](https://github.com/helm-unittest/helm-unittest#get-started) to execute unit tests.
 
 Run the following command to execute the tests
 
