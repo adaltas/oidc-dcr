@@ -23,6 +23,9 @@ All the DCR-related resources (ConfigMap, Service, ServiceAccount, Role, RoleBin
 
 ## Configuration
 
+- `enabled`  
+  Placeholder property to use when defining this chart as a depencency in an umbrela chart.
+
 - `image`  
   The Alpine-based Docker image used to run the registration script. It must include `curl` and `jq`. (Default: `alpine:latest`)
 

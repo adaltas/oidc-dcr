@@ -3,6 +3,10 @@
   "title": "Values Schema for OIDC DCR Helm Chart",
   "type": "object",
   "properties": {
+    "enabled": {
+      "type": "boolean",
+      "description": "Placeholder property to use when defining this chart as a depencency in an umbrela chart."
+    },
     "image": {
       "type": "string",
       "description": "Name of the image used to run the DCR script.",
@@ -119,8 +123,8 @@
     "tls": {
       "type": "object",
       "properties": {
-        "insecure": { "type": "boolean", "default": false},
-        "certificate": { "type": "string", "default": ""}
+        "insecure": { "type": "boolean", "default": false },
+        "certificate": { "type": "string", "default": "" }
       },
       "additionalProperties": false
     },
