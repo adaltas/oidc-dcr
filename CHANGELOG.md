@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/adaltas/oidc-dcr/compare/v0.3.1...v0.3.2) (2026-07-28)
+
+
+### Bug Fixes
+
+* allow request.scope property in json schema ([#15](https://github.com/adaltas/oidc-dcr/issues/15)) ([118d8af](https://github.com/adaltas/oidc-dcr/commit/118d8af8172d4846f744d8c7a7956e6877b39f35))
+
 ## [0.3.1](https://github.com/adaltas/oidc-dcr/compare/v0.3.0...v0.3.1) (2026-07-23)
 
 
