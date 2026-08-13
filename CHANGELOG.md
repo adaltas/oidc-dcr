@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.3](https://github.com/adaltas/oidc-dcr/compare/v0.3.2...v0.3.3) (2026-08-13)
+
+
+### Bug Fixes
+
+* enable direct access grant ([#17](https://github.com/adaltas/oidc-dcr/issues/17)) ([ef374a9](https://github.com/adaltas/oidc-dcr/commit/ef374a9a53d835643cbf87044a151176fd4fb5c0))
+
 ## [0.3.2](https://github.com/adaltas/oidc-dcr/compare/v0.3.1...v0.3.2) (2026-07-28)
 
 
