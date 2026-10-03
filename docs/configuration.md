@@ -6,7 +6,17 @@ The Helm chart is configured with the following properties.
   Placeholder property to use when defining this chart as a depencency in an umbrela chart.
 
 - `image`  
-  The Alpine-based Docker image used to run the registration script. It must include `curl` and `jq`. (Default: `alpine:latest`)
+  The image used to run the registration script. It embeds `curl`, `jq` and `kubectl`, nothing is downloaded when the job starts. See [Airgapped clusters](./airgap.md).
+  - `registry`  
+    Registry hosting the image. Leave empty to use the repository name only. (Default: `quay.io`)
+  - `repository`  
+    Repository of the image. A custom image must provide `sh`, `curl`, `jq` and `kubectl`. (Default: `adaltas/oidc-dcr-job`)
+  - `tag`  
+    Tag of the image. (Default: the chart version)
+  - `pull_policy`  
+    Kubernetes image pull policy, `Always`, `IfNotPresent` or `Never`. (Default: `IfNotPresent`)
+  - `pull_secrets`  
+    List of secret names used to pull the image from a private registry. (Default: `[]`)
 
 - `mapping`
   - `use_default`  

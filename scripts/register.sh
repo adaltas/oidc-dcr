@@ -1,17 +1,20 @@
 #!/usr/bin/env sh
 
-# Dependencies installation
-apk add curl jq bind-tools kubectl
+# The dependencies (curl, jq, kubectl) are provided by the image
+
+# The custom CA certificate is passed to curl directly, no need to update the
+# system trust store
+CA_FILE=/usr/local/share/ca-certificates/ca.crt
 if [ -n "$TLS_CERTIFICATE" ]; then
-  apk add ca-certificates
-  update-ca-certificates
+  CURL_OPTION="$CURL_OPTION --cacert $CA_FILE"
 fi
 
 # Current registration detection
 secret=$(kubectl get secret "$SECRET_NAME" -o json 2>/dev/null)
 if [ -n "$secret" ] >/dev/null; then
   response=$(
-    curl "$CURL_OPTION" \
+    # shellcheck disable=SC2086
+    curl $CURL_OPTION \
       -H "Content-Type:application/json" \
       -H "Authorization: Bearer $(
         echo "$secret" | jq -r '.data.registration_access_token | @base64d'
@@ -30,7 +33,8 @@ fi
 echo 'INFO: DCR registration'
 echo 'INFO: Request body'
 echo "$REQUEST" | jq . # Log the request for debugging purposes
-response=$(curl "$CURL_OPTION" \
+# shellcheck disable=SC2086
+response=$(curl $CURL_OPTION \
   -H "Content-Type:application/json" \
   -d "$REQUEST" \
   "$DCR_REGISTRATION_URL")

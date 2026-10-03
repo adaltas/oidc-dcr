@@ -19,6 +19,7 @@ All the DCR-related resources (ConfigMap, Service, ServiceAccount, Role, RoleBin
 - [Data mapping](./docs/data-mapping.md)
 - [Headlamp integration](./docs/example-headlamp.md)
 - [Argo CD integration](./docs/example-argocd.md)
+- [Airgapped clusters](./docs/airgap.md)
 
 ## Roadmap
 

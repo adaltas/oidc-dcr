@@ -38,7 +38,8 @@ spec:
     spec:
       containers:
         - name: register
-          image: {{ .Values.image }}
+          image: {{ include "image" . | quote }}
+          imagePullPolicy: {{ .Values.image.pull_policy }}
           command: ["/bin/sh", "/mnt/dcr/register.sh"]
           env:
             - name: SECRET_NAME
@@ -72,6 +73,12 @@ spec:
               name: http
               protocol: TCP
       serviceAccountName: {{ include "service_account.name" . }}
+      {{- with .Values.image.pull_secrets }}
+      imagePullSecrets:
+        {{- range . }}
+        - name: {{ . | quote }}
+        {{- end }}
+      {{- end }}
       volumes:
         - name: dcr-volume
           configMap:

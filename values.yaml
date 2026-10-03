@@ -1,7 +1,14 @@
 # Placeholder property to use when defining this chart as a depencency in an umbrela chart.
 enabled: true
-# Name of the Alpine image used to run the script
-image: alpine:latest
+# Image used to run the script, it embeds `curl`, `jq` and `kubectl`
+# In airgapped clusters, mirror the image and override the registry
+image:
+  registry: quay.io
+  repository: adaltas/oidc-dcr-job
+  tag: "" # Default is the chart version
+  pull_policy: IfNotPresent
+  # List of secret names used to pull the image from a private registry
+  pull_secrets: []
 # OIDC provider registration URL.
 # eg http://keycloak-http.keycloak.svc:80/auth/realms/my-realm/clients-registrations/openid-connect/
 registration_url: ""

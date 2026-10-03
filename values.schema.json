@@ -8,9 +8,34 @@
       "description": "Placeholder property to use when defining this chart as a depencency in an umbrela chart."
     },
     "image": {
-      "type": "string",
-      "description": "Name of the image used to run the DCR script.",
-      "default": "alpine:latest"
+      "type": "object",
+      "description": "Image used to run the DCR script, it must provide curl, jq and kubectl.",
+      "properties": {
+        "registry": { "type": "string", "default": "quay.io" },
+        "repository": {
+          "type": "string",
+          "minLength": 1,
+          "default": "adaltas/oidc-dcr-job"
+        },
+        "tag": {
+          "type": "string",
+          "description": "Image tag, default is the chart version.",
+          "default": ""
+        },
+        "pull_policy": {
+          "type": "string",
+          "enum": ["Always", "IfNotPresent", "Never"],
+          "default": "IfNotPresent"
+        },
+        "pull_secrets": {
+          "type": "array",
+          "description": "List of secret names used to pull the image from a private registry.",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 },
+          "default": []
+        }
+      },
+      "additionalProperties": false
     },
     "registration_url": {
       "type": "string",

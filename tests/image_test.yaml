@@ -1,0 +1,62 @@
+suite: Image configuration
+templates:
+  - dcr-job.yaml
+chart:
+  version: 1.2.3
+set:
+  registration_url: "http://example.com"
+  request:
+    redirect_uris:
+      - "http://example.com/oauth2/callback"
+tests:
+  - it: "should use the published image tagged with the chart version by default"
+    asserts:
+      - documentIndex: 2
+        equal:
+          path: spec.template.spec.containers[0].image
+          value: quay.io/adaltas/oidc-dcr-job:1.2.3
+      - documentIndex: 2
+        equal:
+          path: spec.template.spec.containers[0].imagePullPolicy
+          value: IfNotPresent
+      - documentIndex: 2
+        notExists:
+          path: spec.template.spec.imagePullSecrets
+
+  - it: "should use a mirrored image with pull secrets"
+    set:
+      image.registry: registry.internal
+      image.tag: "1.0.0"
+      image.pull_policy: Always
+      image.pull_secrets:
+        - registry-credentials
+    asserts:
+      - documentIndex: 2
+        equal:
+          path: spec.template.spec.containers[0].image
+          value: registry.internal/adaltas/oidc-dcr-job:1.0.0
+      - documentIndex: 2
+        equal:
+          path: spec.template.spec.containers[0].imagePullPolicy
+          value: Always
+      - documentIndex: 2
+        equal:
+          path: spec.template.spec.imagePullSecrets
+          value:
+            - name: registry-credentials
+
+  - it: "should omit the registry when it is empty"
+    set:
+      image.registry: ""
+      image.repository: oidc-dcr-job
+    asserts:
+      - documentIndex: 2
+        equal:
+          path: spec.template.spec.containers[0].image
+          value: oidc-dcr-job:1.2.3
+
+  - it: "should fail schema validation when the image is a string"
+    set:
+      image: alpine:latest
+    asserts:
+      - failedTemplate: {}

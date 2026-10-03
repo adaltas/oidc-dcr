@@ -2,6 +2,15 @@
 {{- .Values.secret | default .Release.Name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
+{{- define "image" -}}
+{{- $name := printf "%s:%s" .Values.image.repository (.Values.image.tag | default .Chart.Version) -}}
+{{- if .Values.image.registry -}}
+{{- printf "%s/%s" .Values.image.registry $name -}}
+{{- else -}}
+{{- $name -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "service_account.name" -}}
 {{- .Values.security.service_account | default .Chart.Name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
