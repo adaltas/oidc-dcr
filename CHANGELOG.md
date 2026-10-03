@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/adaltas/oidc-dcr/compare/v0.3.3...v0.4.0) (2026-10-03)
+
+
+### Features
+
+* support full airgap mode ([#20](https://github.com/adaltas/oidc-dcr/issues/20)) ([8bb6351](https://github.com/adaltas/oidc-dcr/commit/8bb6351aac59da70a1a5ee31844f153e0d093478))
+
 ## [0.3.3](https://github.com/adaltas/oidc-dcr/compare/v0.3.2...v0.3.3) (2026-08-13)
 
 
