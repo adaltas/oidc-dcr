@@ -2,7 +2,7 @@ suite: Job configuration
 templates:
   - dcr-job.yaml
 set:
-  registration_url: "http://example.com"
+  registrationUrl: "http://example.com"
   request:
     redirect_uris:
       - "http://example.com/oauth2/callback"
@@ -16,15 +16,40 @@ tests:
 
   - it: "should set the number of retries of the job"
     set:
-      backoff_limit: 6
+      backoffLimit: 6
     asserts:
       - documentIndex: 2
         equal:
           path: spec.backoffLimit
           value: 6
 
-  - it: "should fail schema validation when backoff_limit is negative"
+  - it: "should fail schema validation when backoffLimit is negative"
     set:
-      backoff_limit: -1
+      backoffLimit: -1
     asserts:
       - failedTemplate: {}
+
+  - it: "should call the registrationUrl"
+    asserts:
+      - documentIndex: 2
+        contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DCR_REGISTRATION_URL
+            value: "http://example.com"
+
+  - it: "should delete the job as soon as it finishes by default"
+    asserts:
+      - documentIndex: 2
+        equal:
+          path: spec.ttlSecondsAfterFinished
+          value: 0
+
+  - it: "should keep the job ttlSeconds after it finishes"
+    set:
+      ttlSeconds: 300
+    asserts:
+      - documentIndex: 2
+        equal:
+          path: spec.ttlSecondsAfterFinished
+          value: 300

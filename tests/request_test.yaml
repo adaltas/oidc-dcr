@@ -2,7 +2,7 @@ suite: Registration request
 templates:
   - dcr-job.yaml
 set:
-  registration_url: "http://example.com"
+  registrationUrl: "http://example.com"
 tests:
   - it: "should require redirect_uris when grant_types is omitted (authorization_code)"
     set:

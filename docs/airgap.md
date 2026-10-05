@@ -19,7 +19,7 @@ Then override the registry in the chart values, along with a pull secret if the 
 oidc-dcr:
   image:
     registry: registry.internal
-    pull_secrets:
+    pullSecrets:
       - registry-credentials
 ```
 

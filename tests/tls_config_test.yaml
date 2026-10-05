@@ -5,7 +5,7 @@ tests:
   - it: "should set TLS certificate and mount CA volume when https protocol
          is used, insecure is false and certificate is defined"
     set:
-      registration_url: "https://example.com"
+      registrationUrl: "https://example.com"
       request:
         application_type: native
         client_name: client-name
@@ -44,7 +44,7 @@ tests:
   - it: "should not set TLS certificate nor mount CA volume when http protocol
          is used, insecure is false and certificate is undefined"
     set:
-      registration_url: "http://example.com"
+      registrationUrl: "http://example.com"
       request:
         application_type: native
         client_name: client-name
@@ -83,7 +83,7 @@ tests:
   - it: "should skip TLS verification and not mount certificate when https 
          protocol is used, insecure is true and certificate is undefined"
     set:
-      registration_url: "https://example.com"
+      registrationUrl: "https://example.com"
       request:
         application_type: native
         client_name: client-name
@@ -122,7 +122,7 @@ tests:
   - it: "should not set TLS certificate nor mount CA volume when https protocol
          is used, insecure is false and certificate is undefined"
     set:
-      registration_url: "https://example.com"
+      registrationUrl: "https://example.com"
       request:
         application_type: native
         client_name: client-name
@@ -163,7 +163,7 @@ tests:
   - it: "should fail schema validation when certificate is defined 
          while insecure is true and the https protocol is used"
     set:
-      registration_url: "https://example.com"
+      registrationUrl: "https://example.com"
       request:
         application_type: native
         client_name: client-name
@@ -178,7 +178,7 @@ tests:
   - it: "should fail schema validation when certificate is defined 
          while insecure is false and the http protocol is used"
     set:
-      registration_url: "http://example.com"
+      registrationUrl: "http://example.com"
       request:
         application_type: native
         client_name: client-name
@@ -193,7 +193,7 @@ tests:
   - it: "should fail schema validation when insecure=true 
          is used with http protocol"
     set:
-      registration_url: "http://example.com"
+      registrationUrl: "http://example.com"
       request:
         application_type: native
         client_name: client-name

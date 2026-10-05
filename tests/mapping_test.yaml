@@ -1,0 +1,41 @@
+suite: Secret keys mapping
+templates:
+  - dcr-job.yaml
+set:
+  registrationUrl: "http://example.com"
+  request:
+    redirect_uris:
+      - "http://example.com/oauth2/callback"
+tests:
+  - it: "should write the defaultKeys along with the keyMapping by default"
+    set:
+      mapping.keyMapping.OIDC_ISSUER_URL: "https://example.com/realms/demo"
+    asserts:
+      - documentIndex: 2
+        equal:
+          path: spec.template.spec.containers[0].env[4].name
+          value: SECRET_KEYS
+      - documentIndex: 2
+        matchRegex:
+          path: spec.template.spec.containers[0].env[4].value
+          pattern: '"clientId":"\.client_id"'
+      - documentIndex: 2
+        matchRegex:
+          path: spec.template.spec.containers[0].env[4].value
+          pattern: '"OIDC_ISSUER_URL":"https://example\.com/realms/demo"'
+      - documentIndex: 2
+        matchRegex:
+          path: spec.template.spec.containers[0].env[4].value
+          pattern: '"registration_client_uri":"\.registration_client_uri"'
+
+  - it: "should only write the keyMapping when useDefault is false"
+    set:
+      mapping.useDefault: false
+      mapping.keyMapping.OIDC_CLIENT_ID: ".client_id"
+    asserts:
+      - documentIndex: 2
+        contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SECRET_KEYS
+            value: '{"OIDC_CLIENT_ID":".client_id","registration_access_token":".registration_access_token","registration_client_uri":".registration_client_uri"}'

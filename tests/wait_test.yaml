@@ -4,7 +4,7 @@ templates:
 chart:
   version: 1.2.3
 set:
-  registration_url: "https://example.com/realms/demo/clients-registrations/openid-connect"
+  registrationUrl: "https://example.com/realms/demo/clients-registrations/openid-connect"
   request:
     redirect_uris:
       - "https://example.com/oauth2/callback"
@@ -17,9 +17,9 @@ tests:
 
   - it: "should wait for the discovery URL with the image, pull policy, curl options and volume mounts of the job"
     set:
-      image.pull_policy: Always
+      image.pullPolicy: Always
       tls.certificate: "cert"
-      wait_for_provider.discovery_url: "https://example.com/realms/demo/.well-known/openid-configuration"
+      waitForProvider.discoveryUrl: "https://example.com/realms/demo/.well-known/openid-configuration"
     asserts:
       - documentIndex: 2
         lengthEqual:
@@ -67,7 +67,7 @@ tests:
   - it: "should use the insecure curl option of the job"
     set:
       tls.insecure: true
-      wait_for_provider.discovery_url: "https://example.com/realms/demo/.well-known/openid-configuration"
+      waitForProvider.discoveryUrl: "https://example.com/realms/demo/.well-known/openid-configuration"
     asserts:
       - documentIndex: 2
         contains:
@@ -82,10 +82,10 @@ tests:
             - name: dcr-volume
               mountPath: /mnt/dcr
 
-  - it: "should wait for up to ttl_seconds"
+  - it: "should wait for up to ttlSeconds"
     set:
-      wait_for_provider.discovery_url: "https://example.com/realms/demo/.well-known/openid-configuration"
-      wait_for_provider.ttl_seconds: 1800
+      waitForProvider.discoveryUrl: "https://example.com/realms/demo/.well-known/openid-configuration"
+      waitForProvider.ttlSeconds: 1800
     asserts:
       - documentIndex: 2
         contains:
@@ -96,13 +96,13 @@ tests:
 
   - it: "should fail schema validation when the discovery URL is not an http(s) URL"
     set:
-      wait_for_provider.discovery_url: "example.com/.well-known/openid-configuration"
+      waitForProvider.discoveryUrl: "example.com/.well-known/openid-configuration"
     asserts:
       - failedTemplate: {}
 
-  - it: "should fail schema validation when ttl_seconds is not a positive integer"
+  - it: "should fail schema validation when ttlSeconds is not a positive integer"
     set:
-      wait_for_provider.discovery_url: "https://example.com/realms/demo/.well-known/openid-configuration"
-      wait_for_provider.ttl_seconds: 0
+      waitForProvider.discoveryUrl: "https://example.com/realms/demo/.well-known/openid-configuration"
+      waitForProvider.ttlSeconds: 0
     asserts:
       - failedTemplate: {}

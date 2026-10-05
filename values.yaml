@@ -6,12 +6,12 @@ image:
   registry: quay.io
   repository: adaltas/oidc-dcr-job
   tag: "" # Default is the chart version
-  pull_policy: IfNotPresent
+  pullPolicy: IfNotPresent
   # List of secret names used to pull the image from a private registry
-  pull_secrets: []
+  pullSecrets: []
 # OIDC provider registration URL.
 # eg http://keycloak-http.keycloak.svc:80/auth/realms/my-realm/clients-registrations/openid-connect/
-registration_url: ""
+registrationUrl: ""
 # DCR information use to build the JSON request
 # redirect_uris is required when grant_types contains authorization_code or
 # implicit, or is omitted (authorization_code by default)
@@ -25,36 +25,36 @@ secret: ""
 # Name of the job, its config map and its role binding, and prefix of the
 # headless service ("<name>-headless"), default is "dcr"
 # Set a distinct name per registration when several share a namespace
-fullname_override: ""
+fullnameOverride: ""
 # Labels added to every object and to the pod of the job
-common_labels: {}
+commonLabels: {}
 security:
-  # Name of the service account, default is fullname_override, then the chart name
-  service_account: ""
-  # Name of the role associated with the service account, default is fullname_override, then the chart name
+  # Name of the service account, default is fullnameOverride, then the chart name
+  serviceAccount: ""
+  # Name of the role associated with the service account, default is fullnameOverride, then the chart name
   role: ""
 # Preserve the job logs for a certain duration in seconds for debugging purposes.
-ttl_seconds: 0
+ttlSeconds: 0
 # Number of retries of the job before it is marked as failed
-backoff_limit: 1
+backoffLimit: 1
 # Wait for the OIDC provider before registering the client
-wait_for_provider:
+waitForProvider:
   # OIDC discovery URL of the provider, when set an init container (same image,
   # pull policy, curl options and volume mounts as the job) polls it every 5
-  # seconds, for up to ttl_seconds, until it answers with JSON
+  # seconds, for up to ttlSeconds, until it answers with JSON
   # eg https://keycloak.example.com/realms/my-realm/.well-known/openid-configuration
-  discovery_url: ""
+  discoveryUrl: ""
   # Maximum duration of the wait in seconds, the init container fails after it
-  ttl_seconds: 600
+  ttlSeconds: 600
 # This section is used to create the Kubernetes Secret with the OIDC client information
 mapping:
-  use_default: true # If true, all the keys defined in the key_mapping section will be included in the output. If false, only the keys defined manually in the secret_keys section will be included.
+  useDefault: true # If true, the keys of the defaultKeys section are included in the output along with the keys of the keyMapping section. If false, only the keys of the keyMapping section are included.
   # This section defines the mapping between the keys in the DCR response and the keys in the chart output object.
-  key_mapping:
+  keyMapping:
     # The values starting with a "." are extracted from the DCR response (see technical reference below).
     # For example, the value ".client_id" is interpreted using `jq` as `<DCR_Response_JSON> | .client_id` and will provide the newly register client id.
     # Hard-coded values can also be set in this section if needed. This is useful to provide keys that are not included in the DCR response directly in the output secret.
-    # For example, the issuer URL is not provided in the DCR response but is required for OIDC authentication, so it can be set directly in the secret_keys section.
+    # For example, the issuer URL is not provided in the DCR response but is required for OIDC authentication, so it can be set directly in the keyMapping section.
     # The user can add additionnal keys if needed or override the existing ones using the same mecanism.
     # --- TECHNICAL REFERENCE: KEYCLOAK DCR RESPONSE ---
     # This list details the fields returned by the Keycloak OIDC Registration API grouped by category.
@@ -86,16 +86,16 @@ mapping:
     # .request_uris: Pre-registered list of URLs for Request Objects.
     # --------------------------------------------------
     # e.g: for Headlamps
-    # secret_keys:
+    # keyMapping:
     #   OIDC_CLIENT_ID: ".client_id"
     #   OIDC_CLIENT_SECRET: ".client_secret"
     #   OIDC_ISSUER_URL: "https://keycloak.admin.k8s.demo/auth/realms/adaltas"
     #   OIDC_SCOPES: "openid email profile"
-    # Those keys are placed in this section to be included in the output object event if `set_all_keys` is set to false.
+    # Those keys are placed in this section to be included in the output object even if `useDefault` is set to false.
     registration_client_uri: ".registration_client_uri"
     registration_access_token: ".registration_access_token"
 
-  default_keys:
+  defaultKeys:
     # Client ID with various key formats to allow flexibility and to accommodate different naming conventions.
     client_id: ".client_id" # Extraction of the "client_id" value from the DCR response
     client-id: ".client_id" # All the alternative key formats points to the first defined values

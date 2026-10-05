@@ -22,12 +22,12 @@
           "description": "Image tag, default is the chart version.",
           "default": ""
         },
-        "pull_policy": {
+        "pullPolicy": {
           "type": "string",
           "enum": ["Always", "IfNotPresent", "Never"],
           "default": "IfNotPresent"
         },
-        "pull_secrets": {
+        "pullSecrets": {
           "type": "array",
           "description": "List of secret names used to pull the image from a private registry.",
           "uniqueItems": true,
@@ -37,7 +37,7 @@
       },
       "additionalProperties": false
     },
-    "registration_url": {
+    "registrationUrl": {
       "type": "string",
       "format": "uri",
       "description": "OIDC provider registration URL."
@@ -167,12 +167,12 @@
       "type": "string",
       "description": "Name of the secret being created."
     },
-    "fullname_override": {
+    "fullnameOverride": {
       "type": "string",
       "description": "Name of the job, its config map and its role binding, and prefix of the headless service, default is \"dcr\".",
       "default": ""
     },
-    "common_labels": {
+    "commonLabels": {
       "type": "object",
       "description": "Labels added to every object and to the pod of the job.",
       "additionalProperties": { "type": "string" },
@@ -181,34 +181,34 @@
     "security": {
       "type": "object",
       "properties": {
-        "service_account": { "type": "string" },
+        "serviceAccount": { "type": "string" },
         "role": { "type": "string" }
       },
       "additionalProperties": false,
       "default": {}
     },
-    "ttl_seconds": {
+    "ttlSeconds": {
       "type": "integer",
       "minimum": 0,
       "default": 0
     },
-    "backoff_limit": {
+    "backoffLimit": {
       "type": "integer",
       "minimum": 0,
       "description": "Number of retries of the job before it is marked as failed.",
       "default": 1
     },
-    "wait_for_provider": {
+    "waitForProvider": {
       "type": "object",
       "description": "Wait for the OIDC provider before registering the client.",
       "properties": {
-        "discovery_url": {
+        "discoveryUrl": {
           "type": "string",
           "pattern": "^(https?://.+)?$",
           "description": "OIDC discovery URL of the provider, polled by an init container until it answers. Empty: no init container.",
           "default": ""
         },
-        "ttl_seconds": {
+        "ttlSeconds": {
           "type": "integer",
           "minimum": 1,
           "description": "Maximum duration of the wait in seconds, the init container fails after it.",
@@ -221,8 +221,8 @@
     "mapping": {
       "type": "object",
       "properties": {
-        "use_default": { "type": "boolean", "default": true },
-        "key_mapping": {
+        "useDefault": { "type": "boolean", "default": true },
+        "keyMapping": {
           "type": "object",
           "additionalProperties": { "type": "string" },
           "default": {
@@ -230,7 +230,7 @@
             "registration_access_token": ".registration_access_token"
           }
         },
-        "default_keys": {
+        "defaultKeys": {
           "type": "object",
           "description": "Internal static map for variations. Locked to default values.",
           "properties": {
@@ -272,11 +272,11 @@
     }
   },
   "additionalProperties": false,
-  "required": ["registration_url", "request"],
+  "required": ["registrationUrl", "request"],
   "oneOf": [
     {
       "properties": {
-        "registration_url": { "pattern": "^http://" },
+        "registrationUrl": { "pattern": "^http://" },
         "tls": {
           "properties": {
             "insecure": { "const": false },
@@ -287,7 +287,7 @@
     },
     {
       "properties": {
-        "registration_url": { "pattern": "^https://" },
+        "registrationUrl": { "pattern": "^https://" },
         "tls": {
           "properties": {
             "insecure": { "const": true },
@@ -298,7 +298,7 @@
     },
     {
       "properties": {
-        "registration_url": { "pattern": "^https://" },
+        "registrationUrl": { "pattern": "^https://" },
         "tls": {
           "properties": {
             "insecure": { "const": false }

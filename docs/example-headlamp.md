@@ -32,7 +32,7 @@ headlamp:
         name: dcr
   #...
 oidc-dcr:
-  registration_url: http://keycloak-http.keycloak.svc:80/auth/realms/adaltas/clients-registrations/openid-connect/
+  registrationUrl: http://keycloak-http.keycloak.svc:80/auth/realms/adaltas/clients-registrations/openid-connect/
   request:
     application_type: native
     client_name: Headlamp
@@ -41,8 +41,8 @@ oidc-dcr:
       - "http://localhost:18080/*"
   secret: headlamp-secret
   mapping:
-    use_default: false
-    key_mapping:
+    useDefault: false
+    keyMapping:
       OIDC_CLIENT_ID: ".client_id"
       OIDC_CLIENT_SECRET: ".client_secret"
       OIDC_ISSUER_URL: "https://keycloak.admin.k8s.demo/auth/realms/adaltas"

@@ -3,7 +3,7 @@ templates:
   - dcr-job.yaml
   - dcr-sa.yaml
 set:
-  registration_url: "http://example.com"
+  registrationUrl: "http://example.com"
   request:
     redirect_uris:
       - "http://example.com/oauth2/callback"
@@ -41,9 +41,9 @@ tests:
         notExists:
           path: metadata.labels
 
-  - it: "should add common_labels to every object and to the pod of the job"
+  - it: "should add commonLabels to every object and to the pod of the job"
     set:
-      common_labels:
+      commonLabels:
         app.kubernetes.io/instance: demo
     asserts:
       - template: dcr-job.yaml
@@ -96,9 +96,9 @@ tests:
           value:
             app.kubernetes.io/instance: demo
 
-  - it: "should let common_labels override the app label of the job"
+  - it: "should let commonLabels override the app label of the job"
     set:
-      common_labels:
+      commonLabels:
         app: registration
     asserts:
       - template: dcr-job.yaml

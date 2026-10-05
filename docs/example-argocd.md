@@ -47,14 +47,14 @@ argo-cd:
 
 A minimal configuration is required for the OIDC-DCR component to handle dynamic client registration:
 
-- The `registration_url` value must be set to the dynamic client registration URL provided by your OIDC identity provider.
+- The `registrationUrl` value must be set to the dynamic client registration URL provided by your OIDC identity provider.
 - The `request` key must be filled with the `redirect_uris` that indicates the Argo CD callback url (see example below).
 - The `secret` must be set to `argo-dcr` to match the target name used by the patch job in the next section.
-- The `use_default` value needs to be set to `true` OR the `client_id` and `client_secret` values needs to be manually set to `.client_id` and `.client_secret`.
+- The `useDefault` value needs to be set to `true` OR the `client_id` and `client_secret` values needs to be manually set to `.client_id` and `.client_secret`.
 
 ```yaml
 oidc-dcr:
-  registration_url: <OIDC PROVIDER REGISTRATION URL>
+  registrationUrl: <OIDC PROVIDER REGISTRATION URL>
   request:
     client_name: "ArgoCD"
     redirect_uris:
@@ -62,11 +62,11 @@ oidc-dcr:
   secret: "argo-dcr"
   mapping:
     # First choice (easier)
-    use_default: true
+    useDefault: true
     # ---- OR ----
     # Second choice (cleaner secret)
-    use_default: false
-    key_mapping:
+    useDefault: false
+    keyMapping:
       client_id: .client_id
       client_secret: .client_secret
 ```

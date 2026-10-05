@@ -12,7 +12,7 @@ To ensure the DCR registration is executed before the main application deploymen
 
 All the DCR-related resources (ConfigMap, Service, ServiceAccount, Role, RoleBinding) are created in first. Then, the Job is executed using all the ressources previously created. The Job still have a negative hook-weight ensuring any other `pre-install`/`pre-upgrade` or `PreSync` job from the main chart is executed after.
 
-When the OIDC provider may not be ready yet, for example when it is installed at the same time, `wait_for_provider.discovery_url` adds an init container to the Job that waits for the provider's discovery URL to answer before the registration starts (see [Configuration](./docs/configuration.md)).
+When the OIDC provider may not be ready yet, for example when it is installed at the same time, `waitForProvider.discoveryUrl` adds an init container to the Job that waits for the provider's discovery URL to answer before the registration starts (see [Configuration](./docs/configuration.md)).
 
 ## Example
 

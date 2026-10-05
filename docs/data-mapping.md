@@ -47,4 +47,4 @@ On top of those standard fields, the DCR response also includes keykloak-specifi
     Pre-registered list of URLs for Request Objects.
 
 > [!NOTE]
-> `registration_client_uri` and `registration_access_token` fields are mapped even if `use_default` is set to `false` to allow the script to automatically detect the registration of the client in case the job is restarted.
+> `registration_client_uri` and `registration_access_token` fields are mapped even if `useDefault` is set to `false` to allow the script to automatically detect the registration of the client in case the job is restarted.

@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "dcr.headless" . }}
-  {{- with .Values.common_labels }}
+  {{- with .Values.commonLabels }}
   labels:
     {{- toYaml . | nindent 4 }}
   {{- end }}
@@ -21,7 +21,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ include "dcr.name" . }}
-  {{- with .Values.common_labels }}
+  {{- with .Values.commonLabels }}
   labels:
     {{- toYaml . | nindent 4 }}
   {{- end }}
@@ -38,30 +38,30 @@ kind: Job
 metadata:
   name: {{ include "dcr.name" . }}
   labels:
-    {{- toYaml (merge (deepCopy .Values.common_labels) (dict "app" "dcr")) | nindent 4 }}
+    {{- toYaml (merge (deepCopy .Values.commonLabels) (dict "app" "dcr")) | nindent 4 }}
   annotations:
 {{ include "hooks.job" . | indent 4 }}
 spec:
-  backoffLimit: {{ .Values.backoff_limit }}
-  ttlSecondsAfterFinished: {{ .Values.ttl_seconds }}
+  backoffLimit: {{ .Values.backoffLimit }}
+  ttlSecondsAfterFinished: {{ .Values.ttlSeconds }}
   template:
-    {{- with .Values.common_labels }}
+    {{- with .Values.commonLabels }}
     metadata:
       labels:
         {{- toYaml . | nindent 8 }}
     {{- end }}
     spec:
-      {{- with .Values.wait_for_provider.discovery_url }}
+      {{- with .Values.waitForProvider.discoveryUrl }}
       initContainers:
         - name: wait-oidc-provider
           image: {{ include "image" $ | quote }}
-          imagePullPolicy: {{ $.Values.image.pull_policy }}
+          imagePullPolicy: {{ $.Values.image.pullPolicy }}
           command: ["/bin/sh", "/mnt/dcr/wait.sh"]
           env:
             - name: OIDC_DISCOVERY_URL
               value: {{ . | quote }}
             - name: WAIT_TTL_SECONDS
-              value: {{ $.Values.wait_for_provider.ttl_seconds | int | quote }}
+              value: {{ $.Values.waitForProvider.ttlSeconds | int | quote }}
             - name: CURL_OPTION
               value: {{ ternary "-sk" "-s" $.Values.tls.insecure | quote }}
           volumeMounts:
@@ -74,7 +74,7 @@ spec:
       containers:
         - name: register
           image: {{ include "image" . | quote }}
-          imagePullPolicy: {{ .Values.image.pull_policy }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: ["/bin/sh", "/mnt/dcr/register.sh"]
           env:
             - name: SECRET_NAME
@@ -82,7 +82,7 @@ spec:
             - name: NAMESPACE
               value: {{ .Release.Namespace | quote }}
             - name: DCR_REGISTRATION_URL
-              value: {{ .Values.registration_url | quote }}
+              value: {{ .Values.registrationUrl | quote }}
             - name: REQUEST
               value: {{ .Values.request | toJson | quote }}
             - name: SECRET_KEYS
@@ -104,7 +104,7 @@ spec:
               name: http
               protocol: TCP
       serviceAccountName: {{ include "service_account.name" . }}
-      {{- with .Values.image.pull_secrets }}
+      {{- with .Values.image.pullSecrets }}
       imagePullSecrets:
         {{- range . }}
         - name: {{ . | quote }}

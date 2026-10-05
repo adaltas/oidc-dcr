@@ -13,29 +13,29 @@
 
 {{/*
   Name of the Job, its ConfigMap and its RoleBinding, default "dcr": two
-  registrations in one namespace need distinct names (fullname_override).
+  registrations in one namespace need distinct names (fullnameOverride).
 */}}
 {{- define "dcr.name" -}}
-{{- .Values.fullname_override | default "dcr" | trunc 63 | trimSuffix "-" -}}
+{{- .Values.fullnameOverride | default "dcr" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 {{- define "dcr.headless" -}}
 {{- printf "%s-headless" (include "dcr.name" .) | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{- define "service_account.name" -}}
-{{- .Values.security.service_account | default .Values.fullname_override | default .Chart.Name | trunc 63 | trimSuffix "-" -}}
+{{- .Values.security.serviceAccount | default .Values.fullnameOverride | default .Chart.Name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 {{- define "role.name" -}}
-{{- .Values.security.role | default .Values.fullname_override | default .Chart.Name | trunc 63 | trimSuffix "-" -}}
+{{- .Values.security.role | default .Values.fullnameOverride | default .Chart.Name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{- define "secret.keys" -}}
-{{- if eq .Values.mapping.use_default true }}
-{{- range $key, $val := .Values.mapping.default_keys }}
+{{- if eq .Values.mapping.useDefault true }}
+{{- range $key, $val := .Values.mapping.defaultKeys }}
 {{ $key }}: {{ $val | quote }}
 {{- end }}
 {{- end }}
-{{- range $key, $val := .Values.mapping.key_mapping }}
+{{- range $key, $val := .Values.mapping.keyMapping }}
 {{ $key }}: {{ $val | quote }}
 {{- end }}
 {{- end -}}

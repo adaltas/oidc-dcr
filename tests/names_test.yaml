@@ -3,7 +3,7 @@ templates:
   - dcr-job.yaml
   - dcr-sa.yaml
 set:
-  registration_url: "http://example.com"
+  registrationUrl: "http://example.com"
   request:
     redirect_uris:
       - "http://example.com/oauth2/callback"
@@ -52,9 +52,9 @@ tests:
           path: metadata.name
           value: dcr
 
-  - it: "should name every object after fullname_override"
+  - it: "should name every object after fullnameOverride"
     set:
-      fullname_override: demo-oidc-dcr
+      fullnameOverride: demo-oidc-dcr
     asserts:
       - template: dcr-job.yaml
         documentIndex: 0
@@ -113,10 +113,10 @@ tests:
           path: subjects[0].name
           value: demo-oidc-dcr
 
-  - it: "should keep the service account and role names of security over fullname_override"
+  - it: "should keep the service account and role names of security over fullnameOverride"
     set:
-      fullname_override: demo-oidc-dcr
-      security.service_account: demo-sa
+      fullnameOverride: demo-oidc-dcr
+      security.serviceAccount: demo-sa
       security.role: demo-role
     asserts:
       - template: dcr-job.yaml

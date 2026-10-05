@@ -55,19 +55,19 @@ Then run `helm dependency update` to download the chart.
 
 ## Mapping DCR response fields to Secret keys
 
-The `mapping.key_mapping` option controls what ends up in the Kubernetes Secret:
+The `mapping.keyMapping` option controls what ends up in the Kubernetes Secret:
 
 - A value starting with `.` is a **jq filter** applied to the DCR JSON response (e.g. `.client_id` extracts the registered client ID).
 - Any other value is written **as-is** — useful for static configuration such as the issuer URL or scope list.
 
-Set `mapping.use_default: false` to write only the keys you define explicitly, rather than the built-in set of aliases.
+Set `mapping.useDefault: false` to write only the keys you define explicitly, rather than the built-in set of aliases.
 
 ```yaml
 oidc-dcr:
   # ...
   mapping:
-    use_default: false
-    key_mapping:
+    useDefault: false
+    keyMapping:
       OIDC_CLIENT_ID: ".client_id"
       OIDC_CLIENT_SECRET: ".client_secret"
       OIDC_ISSUER_URL: "https://keycloak.admin.k8s.demo/auth/realms/adaltas"
@@ -101,7 +101,7 @@ dependencies:
 ```yaml
 oidc-dcr:
   enabled: true
-  registration_url: http://keycloak-http.keycloak.svc:80/auth/realms/adaltas/clients-registrations/openid-connect/
+  registrationUrl: http://keycloak-http.keycloak.svc:80/auth/realms/adaltas/clients-registrations/openid-connect/
   request:
     application_type: native
     client_name: Headlamp
@@ -110,8 +110,8 @@ oidc-dcr:
       - "http://localhost:18080/*"
   secret: headlamp-secret
   mapping:
-    use_default: false
-    key_mapping:
+    useDefault: false
+    keyMapping:
       OIDC_CLIENT_ID: ".client_id"
       OIDC_CLIENT_SECRET: ".client_secret"
       OIDC_ISSUER_URL: "https://keycloak.admin.k8s.demo/auth/realms/adaltas"

@@ -4,7 +4,7 @@ templates:
 chart:
   version: 1.2.3
 set:
-  registration_url: "http://example.com"
+  registrationUrl: "http://example.com"
   request:
     redirect_uris:
       - "http://example.com/oauth2/callback"
@@ -27,8 +27,8 @@ tests:
     set:
       image.registry: registry.internal
       image.tag: "1.0.0"
-      image.pull_policy: Always
-      image.pull_secrets:
+      image.pullPolicy: Always
+      image.pullSecrets:
         - registry-credentials
     asserts:
       - documentIndex: 2
