@@ -1,0 +1,84 @@
+suite: Wait for the OIDC provider
+templates:
+  - dcr-job.yaml
+chart:
+  version: 1.2.3
+set:
+  registration_url: "https://example.com/realms/demo/clients-registrations/openid-connect"
+  request:
+    redirect_uris:
+      - "https://example.com/oauth2/callback"
+tests:
+  - it: "should not wait for the provider by default"
+    asserts:
+      - documentIndex: 2
+        notExists:
+          path: spec.template.spec.initContainers
+
+  - it: "should wait for the discovery URL with the image, pull policy, curl options and volume mounts of the job"
+    set:
+      image.pull_policy: Always
+      tls.certificate: "cert"
+      wait_for_provider.discovery_url: "https://example.com/realms/demo/.well-known/openid-configuration"
+    asserts:
+      - documentIndex: 2
+        lengthEqual:
+          path: spec.template.spec.initContainers
+          count: 1
+      - documentIndex: 2
+        equal:
+          path: spec.template.spec.initContainers[0].name
+          value: wait-oidc-provider
+      - documentIndex: 2
+        equal:
+          path: spec.template.spec.initContainers[0].image
+          value: quay.io/adaltas/oidc-dcr-job:1.2.3
+      - documentIndex: 2
+        equal:
+          path: spec.template.spec.initContainers[0].imagePullPolicy
+          value: Always
+      - documentIndex: 2
+        equal:
+          path: spec.template.spec.initContainers[0].env
+          value:
+            - name: OIDC_DISCOVERY_URL
+              value: "https://example.com/realms/demo/.well-known/openid-configuration"
+            - name: CURL_OPTION
+              value: "-s"
+      - documentIndex: 2
+        equal:
+          path: spec.template.spec.initContainers[0].volumeMounts
+          value:
+            - name: dcr-volume
+              mountPath: /mnt/dcr
+            - name: ca-volume
+              mountPath: /usr/local/share/ca-certificates/ca.crt
+              subPath: ca.crt
+      - documentIndex: 2
+        equal:
+          path: spec.template.spec.initContainers[0].command[1]
+          value: "-c"
+
+  - it: "should use the insecure curl option of the job"
+    set:
+      tls.insecure: true
+      wait_for_provider.discovery_url: "https://example.com/realms/demo/.well-known/openid-configuration"
+    asserts:
+      - documentIndex: 2
+        contains:
+          path: spec.template.spec.initContainers[0].env
+          content:
+            name: CURL_OPTION
+            value: "-sk"
+      - documentIndex: 2
+        equal:
+          path: spec.template.spec.initContainers[0].volumeMounts
+          value:
+            - name: dcr-volume
+              mountPath: /mnt/dcr
+
+  - it: "should fail schema validation when the discovery URL is not an http(s) URL"
+    set:
+      wait_for_provider.discovery_url: "example.com/.well-known/openid-configuration"
+    asserts:
+      - failedTemplate: {}

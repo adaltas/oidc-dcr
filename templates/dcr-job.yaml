@@ -49,6 +49,24 @@ spec:
         {{- toYaml . | nindent 8 }}
     {{- end }}
     spec:
+      {{- with .Values.wait_for_provider.discovery_url }}
+      initContainers:
+        - name: wait-oidc-provider
+          image: {{ include "image" $ | quote }}
+          imagePullPolicy: {{ $.Values.image.pull_policy }}
+          command:
+            - /bin/sh
+            - -c
+            - |-
+              {{- include "wait.script" $ | nindent 14 }}
+          env:
+            - name: OIDC_DISCOVERY_URL
+              value: {{ . | quote }}
+            - name: CURL_OPTION
+              value: {{ include "curl.option" $ | quote }}
+          volumeMounts:
+            {{- include "volume_mounts" $ | nindent 12 }}
+      {{- end }}
       containers:
         - name: register
           image: {{ include "image" . | quote }}
@@ -66,21 +84,13 @@ spec:
             - name: SECRET_KEYS
               value: {{ include "secret.keys" . | fromYaml | toJson | quote }}
             - name: CURL_OPTION
-              {{- if .Values.tls.insecure }}
-              value: "-sk"
-              {{- else }}
-              value: "-s"
-              {{- end }}
+              value: {{ include "curl.option" . | quote }}
             {{- if (ne .Values.tls.certificate "") }}
             - name: TLS_CERTIFICATE
               value: {{ .Values.tls.certificate | quote }}
             {{- end }}
           volumeMounts:
-            - name: dcr-volume
-              mountPath: /mnt/dcr
-              {{- if include "volume_mount.secret" . }}
-              {{- include "volume_mount.secret" . | nindent 12 -}}
-              {{- end }}
+            {{- include "volume_mounts" . | nindent 12 }}
           ports:
             - containerPort: 80
               name: http

@@ -190,6 +190,20 @@
       "description": "Number of retries of the job before it is marked as failed.",
       "default": 1
     },
+    "wait_for_provider": {
+      "type": "object",
+      "description": "Wait for the OIDC provider before registering the client.",
+      "properties": {
+        "discovery_url": {
+          "type": "string",
+          "pattern": "^(https?://.+)?$",
+          "description": "OIDC discovery URL of the provider, polled by an init container until it answers. Empty: no init container.",
+          "default": ""
+        }
+      },
+      "additionalProperties": false,
+      "default": {}
+    },
     "mapping": {
       "type": "object",
       "properties": {

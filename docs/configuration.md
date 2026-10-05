@@ -35,6 +35,11 @@ The Helm chart is configured with the following properties.
 - `backoff_limit`  
   Number of retries of the Job before it is marked as failed. Raise it when the OIDC provider may refuse the first registrations, for example while its configuration is being applied. (Default: `1`)
 
+- `wait_for_provider`  
+  Waits for the OIDC provider before registering the client.
+  - `discovery_url`  
+    OIDC discovery URL of the provider, for example `https://keycloak.example.com/realms/my-realm/.well-known/openid-configuration`. When set, the Job gets a `wait-oidc-provider` init container (same image, pull policy, `curl` options and volume mounts, the CA certificate included, as the registration container) that polls the URL every 5 seconds, for up to 10 minutes, until it answers with JSON. Use it when the chart is installed along with the provider: the registration script does not check the HTTP status of its request and would fail on the error page of a provider that is still starting. (Default: `""`, no init container)
+
 - `request`  
   The JSON payload sent to the OIDC identity provider during registration is defined under the `request` section. It supports all the standard fields defined in the OpenID Connect Dynamic Client Registration specification, as well as some Keycloak-specific extensions. The most common fields are:
   - `application_type`  
