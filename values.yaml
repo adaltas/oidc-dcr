@@ -41,9 +41,11 @@ backoff_limit: 1
 wait_for_provider:
   # OIDC discovery URL of the provider, when set an init container (same image,
   # pull policy, curl options and volume mounts as the job) polls it every 5
-  # seconds, for up to 10 minutes, until it answers with JSON
+  # seconds, for up to ttl_seconds, until it answers with JSON
   # eg https://keycloak.example.com/realms/my-realm/.well-known/openid-configuration
   discovery_url: ""
+  # Maximum duration of the wait in seconds, the init container fails after it
+  ttl_seconds: 600
 # This section is used to create the Kubernetes Secret with the OIDC client information
 mapping:
   use_default: true # If true, all the keys defined in the key_mapping section will be included in the output. If false, only the keys defined manually in the secret_keys section will be included.

@@ -66,17 +66,16 @@
 
 {{/*
   Script of the wait-oidc-provider init container: polls the OIDC discovery URL
-  every 5 seconds, for up to 10 minutes, until it answers with JSON. The
-  registration script does not check the HTTP status of its request: while the
-  provider starts, it would read an error page (e.g. the 503 of an ingress) as
-  a response and fail on it.
+  every 5 seconds, for up to WAIT_TTL_SECONDS seconds, until it answers with
+  JSON. The registration script does not check the HTTP status of its request:
+  while the provider starts, it would read an error page (e.g. the 503 of an
+  ingress) as a response and fail on it.
 */}}
 {{- define "wait.script" -}}
 if [ -f /usr/local/share/ca-certificates/ca.crt ]; then CURL_OPTION="$CURL_OPTION --cacert /usr/local/share/ca-certificates/ca.crt"; fi
-i=0
+deadline=$(($(date +%s) + WAIT_TTL_SECONDS))
 until curl $CURL_OPTION -f "$OIDC_DISCOVERY_URL" | jq -e .issuer >/dev/null 2>&1; do
-  i=$((i + 1))
-  if [ "$i" -ge 120 ]; then echo "ERROR: $OIDC_DISCOVERY_URL did not answer in 10 minutes"; exit 1; fi
+  if [ "$(date +%s)" -ge "$deadline" ]; then echo "ERROR: $OIDC_DISCOVERY_URL did not answer in $WAIT_TTL_SECONDS seconds"; exit 1; fi
   echo "INFO: waiting for the OIDC provider ($OIDC_DISCOVERY_URL)"
   sleep 5
 done

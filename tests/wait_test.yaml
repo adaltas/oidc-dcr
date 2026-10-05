@@ -43,6 +43,8 @@ tests:
           value:
             - name: OIDC_DISCOVERY_URL
               value: "https://example.com/realms/demo/.well-known/openid-configuration"
+            - name: WAIT_TTL_SECONDS
+              value: "600"
             - name: CURL_OPTION
               value: "-s"
       - documentIndex: 2
@@ -77,8 +79,27 @@ tests:
             - name: dcr-volume
               mountPath: /mnt/dcr
 
+  - it: "should wait for up to ttl_seconds"
+    set:
+      wait_for_provider.discovery_url: "https://example.com/realms/demo/.well-known/openid-configuration"
+      wait_for_provider.ttl_seconds: 1800
+    asserts:
+      - documentIndex: 2
+        contains:
+          path: spec.template.spec.initContainers[0].env
+          content:
+            name: WAIT_TTL_SECONDS
+            value: "1800"
+
   - it: "should fail schema validation when the discovery URL is not an http(s) URL"
     set:
       wait_for_provider.discovery_url: "example.com/.well-known/openid-configuration"
+    asserts:
+      - failedTemplate: {}
+
+  - it: "should fail schema validation when ttl_seconds is not a positive integer"
+    set:
+      wait_for_provider.discovery_url: "https://example.com/realms/demo/.well-known/openid-configuration"
+      wait_for_provider.ttl_seconds: 0
     asserts:
       - failedTemplate: {}

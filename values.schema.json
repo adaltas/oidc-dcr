@@ -207,6 +207,12 @@
           "pattern": "^(https?://.+)?$",
           "description": "OIDC discovery URL of the provider, polled by an init container until it answers. Empty: no init container.",
           "default": ""
+        },
+        "ttl_seconds": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum duration of the wait in seconds, the init container fails after it.",
+          "default": 600
         }
       },
       "additionalProperties": false,
