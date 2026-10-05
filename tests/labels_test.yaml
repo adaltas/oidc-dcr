@@ -1,0 +1,109 @@
+suite: Common labels
+templates:
+  - dcr-job.yaml
+  - dcr-sa.yaml
+set:
+  registration_url: "http://example.com"
+  request:
+    redirect_uris:
+      - "http://example.com/oauth2/callback"
+tests:
+  - it: "should only label the job app=dcr by default"
+    asserts:
+      - template: dcr-job.yaml
+        documentIndex: 0
+        notExists:
+          path: metadata.labels
+      - template: dcr-job.yaml
+        documentIndex: 1
+        notExists:
+          path: metadata.labels
+      - template: dcr-job.yaml
+        documentIndex: 2
+        equal:
+          path: metadata.labels
+          value:
+            app: dcr
+      - template: dcr-job.yaml
+        documentIndex: 2
+        notExists:
+          path: spec.template.metadata
+      - template: dcr-sa.yaml
+        documentIndex: 0
+        notExists:
+          path: metadata.labels
+      - template: dcr-sa.yaml
+        documentIndex: 1
+        notExists:
+          path: metadata.labels
+      - template: dcr-sa.yaml
+        documentIndex: 2
+        notExists:
+          path: metadata.labels
+
+  - it: "should add common_labels to every object and to the pod of the job"
+    set:
+      common_labels:
+        app.kubernetes.io/instance: demo
+    asserts:
+      - template: dcr-job.yaml
+        documentIndex: 0
+        equal:
+          path: metadata.labels
+          value:
+            app.kubernetes.io/instance: demo
+      - template: dcr-job.yaml
+        documentIndex: 0
+        equal:
+          path: spec.selector
+          value:
+            job-name: dcr
+      - template: dcr-job.yaml
+        documentIndex: 1
+        equal:
+          path: metadata.labels
+          value:
+            app.kubernetes.io/instance: demo
+      - template: dcr-job.yaml
+        documentIndex: 2
+        equal:
+          path: metadata.labels
+          value:
+            app: dcr
+            app.kubernetes.io/instance: demo
+      - template: dcr-job.yaml
+        documentIndex: 2
+        equal:
+          path: spec.template.metadata.labels
+          value:
+            app.kubernetes.io/instance: demo
+      - template: dcr-sa.yaml
+        documentIndex: 0
+        equal:
+          path: metadata.labels
+          value:
+            app.kubernetes.io/instance: demo
+      - template: dcr-sa.yaml
+        documentIndex: 1
+        equal:
+          path: metadata.labels
+          value:
+            app.kubernetes.io/instance: demo
+      - template: dcr-sa.yaml
+        documentIndex: 2
+        equal:
+          path: metadata.labels
+          value:
+            app.kubernetes.io/instance: demo
+
+  - it: "should let common_labels override the app label of the job"
+    set:
+      common_labels:
+        app: registration
+    asserts:
+      - template: dcr-job.yaml
+        documentIndex: 2
+        equal:
+          path: metadata.labels
+          value:
+            app: registration

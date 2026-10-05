@@ -66,6 +66,9 @@ The Helm chart is configured with the following properties.
 - `fullname_override`  
   Name of the Job, its ConfigMap and its RoleBinding, and prefix of the headless Service (`<name>-headless`, selecting the Job's pod). Every registration of a namespace needs its own name, for example two releases of the chart, or two clients registered by the same umbrella chart. (Default: `dcr`)
 
+- `common_labels`  
+  Labels added to every object of the chart and to the pod of the Job, for example `app.kubernetes.io/instance` to group the objects with the application registering the client. (Default: `{}`)
+
 - `security`  
   Names of the Kubernetes ServiceAccount and RBAC role used to execute the Job and grant it permissions to create the Secret.
   - `security.service_account`  

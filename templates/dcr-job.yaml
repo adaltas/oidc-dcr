@@ -2,6 +2,10 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "dcr.headless" . }}
+  {{- with .Values.common_labels }}
+  labels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   annotations:
 {{ include "hooks.ressources" . | indent 4 }}
 spec:
@@ -17,6 +21,10 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ include "dcr.name" . }}
+  {{- with .Values.common_labels }}
+  labels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   annotations:
 {{ include "hooks.ressources" . | indent 4 }}
 data:
@@ -28,13 +36,18 @@ kind: Job
 metadata:
   name: {{ include "dcr.name" . }}
   labels:
-    app: dcr
+    {{- toYaml (merge (deepCopy .Values.common_labels) (dict "app" "dcr")) | nindent 4 }}
   annotations:
 {{ include "hooks.job" . | indent 4 }}
 spec:
   backoffLimit: 1
   ttlSecondsAfterFinished: {{ .Values.ttl_seconds }}
   template:
+    {{- with .Values.common_labels }}
+    metadata:
+      labels:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
     spec:
       containers:
         - name: register

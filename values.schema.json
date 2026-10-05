@@ -164,6 +164,12 @@
       "description": "Name of the job, its config map and its role binding, and prefix of the headless service, default is \"dcr\".",
       "default": ""
     },
+    "common_labels": {
+      "type": "object",
+      "description": "Labels added to every object and to the pod of the job.",
+      "additionalProperties": { "type": "string" },
+      "default": {}
+    },
     "security": {
       "type": "object",
       "properties": {

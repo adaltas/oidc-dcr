@@ -24,6 +24,8 @@ secret: ""
 # headless service ("<name>-headless"), default is "dcr"
 # Set a distinct name per registration when several share a namespace
 fullname_override: ""
+# Labels added to every object and to the pod of the job
+common_labels: {}
 security:
   # Name of the service account, default is fullname_override, then the chart name
   service_account: ""
