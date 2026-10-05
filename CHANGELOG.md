@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.5.0](https://github.com/adaltas/oidc-dcr/compare/v0.4.0...v0.5.0) (2026-10-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* rename the values to camelCase
+
+### Features
+
+* add common_labels to every object ([7875146](https://github.com/adaltas/oidc-dcr/commit/78751460000c3154fdb5289ae77abf60e2d5289d))
+* bound the wait for the OIDC provider with wait_for_provider.ttl_seconds ([5015499](https://github.com/adaltas/oidc-dcr/commit/50154991361f06b06ef31a2c83316159f20f755b))
+* make the job backoff_limit configurable ([4e1878f](https://github.com/adaltas/oidc-dcr/commit/4e1878fee0f7bb9c1464ac1482b9ccccaac9e778))
+* name the objects after fullname_override ([6d16661](https://github.com/adaltas/oidc-dcr/commit/6d166617e8b562c81c53a79a03fa3a1513a2efe4))
+* optionally wait for the OIDC provider before registering ([d248c1d](https://github.com/adaltas/oidc-dcr/commit/d248c1d5a199c554d63fc17ae53706be3bb31e17))
+* rename the values to camelCase ([fccdb05](https://github.com/adaltas/oidc-dcr/commit/fccdb0542ac78506ff5a3c921db4a54279860818))
+
+
+### Bug Fixes
+
+* require redirect_uris only for clients that sign users in ([b39a075](https://github.com/adaltas/oidc-dcr/commit/b39a0752a3a464ddb614502108a4f85e74685096))
+
 ## [0.4.0](https://github.com/adaltas/oidc-dcr/compare/v0.3.3...v0.4.0) (2026-10-03)
 
 
