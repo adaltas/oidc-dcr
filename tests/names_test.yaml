@@ -1,0 +1,151 @@
+suite: Object names
+templates:
+  - dcr-job.yaml
+  - dcr-sa.yaml
+set:
+  registration_url: "http://example.com"
+  request:
+    redirect_uris:
+      - "http://example.com/oauth2/callback"
+tests:
+  - it: "should name the job objects dcr and the service account and role after the chart by default"
+    asserts:
+      - template: dcr-job.yaml
+        documentIndex: 0
+        equal:
+          path: metadata.name
+          value: dcr-headless
+      - template: dcr-job.yaml
+        documentIndex: 0
+        equal:
+          path: spec.selector
+          value:
+            job-name: dcr
+      - template: dcr-job.yaml
+        documentIndex: 1
+        equal:
+          path: metadata.name
+          value: dcr
+      - template: dcr-job.yaml
+        documentIndex: 2
+        equal:
+          path: metadata.name
+          value: dcr
+      - template: dcr-job.yaml
+        documentIndex: 2
+        equal:
+          path: spec.template.spec.volumes[0].configMap.name
+          value: dcr
+      - template: dcr-sa.yaml
+        documentIndex: 0
+        equal:
+          path: metadata.name
+          value: oidc-dcr
+      - template: dcr-sa.yaml
+        documentIndex: 1
+        equal:
+          path: metadata.name
+          value: oidc-dcr
+      - template: dcr-sa.yaml
+        documentIndex: 2
+        equal:
+          path: metadata.name
+          value: dcr
+
+  - it: "should name every object after fullname_override"
+    set:
+      fullname_override: demo-oidc-dcr
+    asserts:
+      - template: dcr-job.yaml
+        documentIndex: 0
+        equal:
+          path: metadata.name
+          value: demo-oidc-dcr-headless
+      - template: dcr-job.yaml
+        documentIndex: 0
+        equal:
+          path: spec.selector
+          value:
+            job-name: demo-oidc-dcr
+      - template: dcr-job.yaml
+        documentIndex: 1
+        equal:
+          path: metadata.name
+          value: demo-oidc-dcr
+      - template: dcr-job.yaml
+        documentIndex: 2
+        equal:
+          path: metadata.name
+          value: demo-oidc-dcr
+      - template: dcr-job.yaml
+        documentIndex: 2
+        equal:
+          path: spec.template.spec.volumes[0].configMap.name
+          value: demo-oidc-dcr
+      - template: dcr-job.yaml
+        documentIndex: 2
+        equal:
+          path: spec.template.spec.serviceAccountName
+          value: demo-oidc-dcr
+      - template: dcr-sa.yaml
+        documentIndex: 0
+        equal:
+          path: metadata.name
+          value: demo-oidc-dcr
+      - template: dcr-sa.yaml
+        documentIndex: 1
+        equal:
+          path: metadata.name
+          value: demo-oidc-dcr
+      - template: dcr-sa.yaml
+        documentIndex: 2
+        equal:
+          path: metadata.name
+          value: demo-oidc-dcr
+      - template: dcr-sa.yaml
+        documentIndex: 2
+        equal:
+          path: roleRef.name
+          value: demo-oidc-dcr
+      - template: dcr-sa.yaml
+        documentIndex: 2
+        equal:
+          path: subjects[0].name
+          value: demo-oidc-dcr
+
+  - it: "should keep the service account and role names of security over fullname_override"
+    set:
+      fullname_override: demo-oidc-dcr
+      security.service_account: demo-sa
+      security.role: demo-role
+    asserts:
+      - template: dcr-job.yaml
+        documentIndex: 2
+        equal:
+          path: spec.template.spec.serviceAccountName
+          value: demo-sa
+      - template: dcr-sa.yaml
+        documentIndex: 0
+        equal:
+          path: metadata.name
+          value: demo-sa
+      - template: dcr-sa.yaml
+        documentIndex: 1
+        equal:
+          path: metadata.name
+          value: demo-role
+      - template: dcr-sa.yaml
+        documentIndex: 2
+        equal:
+          path: metadata.name
+          value: demo-oidc-dcr
+      - template: dcr-sa.yaml
+        documentIndex: 2
+        equal:
+          path: roleRef.name
+          value: demo-role
+      - template: dcr-sa.yaml
+        documentIndex: 2
+        equal:
+          path: subjects[0].name
+          value: demo-sa

@@ -20,10 +20,14 @@ tls:
   certificate: "" # Provide a certificate to DCR job using an accessible secret
 # Name of the secret being created, default is the chart name
 secret: ""
+# Name of the job, its config map and its role binding, and prefix of the
+# headless service ("<name>-headless"), default is "dcr"
+# Set a distinct name per registration when several share a namespace
+fullname_override: ""
 security:
-  # Name of the service account
+  # Name of the service account, default is fullname_override, then the chart name
   service_account: ""
-  # Name of the role associated with the service account
+  # Name of the role associated with the service account, default is fullname_override, then the chart name
   role: ""
 # Preserve the job logs for a certain duration in seconds for debugging purposes.
 ttl_seconds: 0

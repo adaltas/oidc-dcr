@@ -159,6 +159,11 @@
       "type": "string",
       "description": "Name of the secret being created."
     },
+    "fullname_override": {
+      "type": "string",
+      "description": "Name of the job, its config map and its role binding, and prefix of the headless service, default is \"dcr\".",
+      "default": ""
+    },
     "security": {
       "type": "object",
       "properties": {

@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: dcr-headless
+  name: {{ include "dcr.headless" . }}
   annotations:
 {{ include "hooks.ressources" . | indent 4 }}
 spec:
   clusterIP: None
   selector:
-    job-name: dcr
+    job-name: {{ include "dcr.name" . }}
   ports:
     - port: 80
       protocol: TCP
@@ -16,7 +16,7 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: dcr
+  name: {{ include "dcr.name" . }}
   annotations:
 {{ include "hooks.ressources" . | indent 4 }}
 data:
@@ -26,7 +26,7 @@ data:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: dcr
+  name: {{ include "dcr.name" . }}
   labels:
     app: dcr
   annotations:
@@ -83,7 +83,7 @@ spec:
         - name: dcr-volume
           configMap:
             defaultMode: 493
-            name: dcr
+            name: {{ include "dcr.name" . }}
         {{- if include "volume.secret" . }}
         {{- include "volume.secret" . | nindent 8 -}}
         {{- end }}

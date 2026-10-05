@@ -63,12 +63,15 @@ The Helm chart is configured with the following properties.
 - `secret`  
   Control the name for the created Kubernetes Secret. If left empty, the Helm chart name is used.
 
+- `fullname_override`  
+  Name of the Job, its ConfigMap and its RoleBinding, and prefix of the headless Service (`<name>-headless`, selecting the Job's pod). Every registration of a namespace needs its own name, for example two releases of the chart, or two clients registered by the same umbrella chart. (Default: `dcr`)
+
 - `security`  
   Names of the Kubernetes ServiceAccount and RBAC role used to execute the Job and grant it permissions to create the Secret.
   - `security.service_account`  
-    Name of the Kubernetes ServiceAccount used to execute the job. (Default: `<Chart name>`)
+    Name of the Kubernetes ServiceAccount used to execute the job. (Default: `fullname_override`, then `<Chart name>`)
   - `security.role`  
-    Name of the RBAC role associated with the ServiceAccount to grant Secret creation permissions. (Default: `<Chart name>`)
+    Name of the RBAC role associated with the ServiceAccount to grant Secret creation permissions. (Default: `fullname_override`, then `<Chart name>`)
 
 ## Keycloak Notes
 
