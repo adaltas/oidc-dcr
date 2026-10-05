@@ -30,7 +30,7 @@ The Helm chart is configured with the following properties.
   The OIDC provider registration URL used to process the dynamic registration.
 
 - `ttl_seconds`  
-  Time-to-live duration (in seconds) to preserve the Kubernetes Job logs after execution for debugging purposes. `0` disables automatic deletion or relies on cluster-level defaults. (Default: `60`)
+  Time-to-live duration (in seconds) to preserve the Kubernetes Job, and the logs of its pod, after it finishes, for debugging purposes. `0` deletes the Job as soon as it finishes. (Default: `0`)
 
 - `backoff_limit`  
   Number of retries of the Job before it is marked as failed. Raise it when the OIDC provider may refuse the first registrations, for example while its configuration is being applied. (Default: `1`)
@@ -49,7 +49,7 @@ The Helm chart is configured with the following properties.
   - `logo_uri`  
     URL pointing to the logo of the client application. (Default: `""`)
   - `grant_types`  
-    OAuth 2.0 grant types that the client restricts itself to using. (Default: `["authorization_code", "client_credentials"]`)
+    OAuth 2.0 grant types that the client restricts itself to using. (Default: `["authorization_code"]`, used by the provider when omitted)
   - `redirect_uris`  
     List of allowed callback URLs where the identity provider can redirect users after authentication. Required when `grant_types` contains `authorization_code` or `implicit`, or is omitted (the provider then uses `authorization_code`). A client which does not sign users in, for example with the `client_credentials` grant only, does not need it.
   - `response_types`  
@@ -69,7 +69,7 @@ The Helm chart is configured with the following properties.
     Mount a secret into DCR jobs. Value needs to match the name of an accessible secret.
 
 - `secret`  
-  Control the name for the created Kubernetes Secret. If left empty, the Helm chart name is used.
+  Control the name for the created Kubernetes Secret. If left empty, the Helm release name is used.
 
 - `fullname_override`  
   Name of the Job, its ConfigMap and its RoleBinding, and prefix of the headless Service (`<name>-headless`, selecting the Job's pod). Every registration of a namespace needs its own name, for example two releases of the chart, or two clients registered by the same umbrella chart. (Default: `dcr`)

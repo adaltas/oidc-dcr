@@ -20,7 +20,7 @@ request: {}
 tls:
   insecure: false # Call the DCR API using insecure option of the curl command
   certificate: "" # Provide a certificate to DCR job using an accessible secret
-# Name of the secret being created, default is the chart name
+# Name of the secret being created, default is the release name
 secret: ""
 # Name of the job, its config map and its role binding, and prefix of the
 # headless service ("<name>-headless"), default is "dcr"
