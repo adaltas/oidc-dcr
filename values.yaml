@@ -33,6 +33,8 @@ security:
   role: ""
 # Preserve the job logs for a certain duration in seconds for debugging purposes.
 ttl_seconds: 0
+# Number of retries of the job before it is marked as failed
+backoff_limit: 1
 # This section is used to create the Kubernetes Secret with the OIDC client information
 mapping:
   use_default: true # If true, all the keys defined in the key_mapping section will be included in the output. If false, only the keys defined manually in the secret_keys section will be included.

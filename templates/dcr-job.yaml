@@ -40,7 +40,7 @@ metadata:
   annotations:
 {{ include "hooks.job" . | indent 4 }}
 spec:
-  backoffLimit: 1
+  backoffLimit: {{ .Values.backoff_limit }}
   ttlSecondsAfterFinished: {{ .Values.ttl_seconds }}
   template:
     {{- with .Values.common_labels }}

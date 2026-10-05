@@ -184,6 +184,12 @@
       "minimum": 0,
       "default": 0
     },
+    "backoff_limit": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of retries of the job before it is marked as failed.",
+      "default": 1
+    },
     "mapping": {
       "type": "object",
       "properties": {

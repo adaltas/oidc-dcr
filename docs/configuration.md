@@ -32,6 +32,9 @@ The Helm chart is configured with the following properties.
 - `ttl_seconds`  
   Time-to-live duration (in seconds) to preserve the Kubernetes Job logs after execution for debugging purposes. `0` disables automatic deletion or relies on cluster-level defaults. (Default: `60`)
 
+- `backoff_limit`  
+  Number of retries of the Job before it is marked as failed. Raise it when the OIDC provider may refuse the first registrations, for example while its configuration is being applied. (Default: `1`)
+
 - `request`  
   The JSON payload sent to the OIDC identity provider during registration is defined under the `request` section. It supports all the standard fields defined in the OpenID Connect Dynamic Client Registration specification, as well as some Keycloak-specific extensions. The most common fields are:
   - `application_type`  
