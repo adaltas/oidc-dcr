@@ -51,7 +51,7 @@ The Helm chart is configured with the following properties.
   - `grant_types`  
     OAuth 2.0 grant types that the client restricts itself to using. (Default: `["authorization_code", "client_credentials"]`)
   - `redirect_uris`  
-    List of allowed callback URLs where the identity provider can redirect users after authentication. (Default: `[]`)
+    List of allowed callback URLs where the identity provider can redirect users after authentication. Required when `grant_types` contains `authorization_code` or `implicit`, or is omitted (the provider then uses `authorization_code`). A client which does not sign users in, for example with the `client_credentials` grant only, does not need it.
   - `response_types`  
     List of expected OAuth 2.0 response type values (e.g., `code`). (Default: `[]`)
   - `client_uri`  

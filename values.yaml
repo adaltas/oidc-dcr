@@ -13,6 +13,8 @@ image:
 # eg http://keycloak-http.keycloak.svc:80/auth/realms/my-realm/clients-registrations/openid-connect/
 registration_url: ""
 # DCR information use to build the JSON request
+# redirect_uris is required when grant_types contains authorization_code or
+# implicit, or is omitted (authorization_code by default)
 request: {}
 # Informations use to call DCR API
 tls:

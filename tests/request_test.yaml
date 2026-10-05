@@ -1,0 +1,60 @@
+suite: Registration request
+templates:
+  - dcr-job.yaml
+set:
+  registration_url: "http://example.com"
+tests:
+  - it: "should require redirect_uris when grant_types is omitted (authorization_code)"
+    set:
+      request:
+        client_name: demo
+    asserts:
+      - failedTemplate:
+          errorPattern: "at '/request': missing property 'redirect_uris'"
+
+  - it: "should require redirect_uris with the authorization_code grant"
+    set:
+      request:
+        grant_types:
+          - client_credentials
+          - authorization_code
+    asserts:
+      - failedTemplate:
+          errorPattern: "at '/request': missing property 'redirect_uris'"
+
+  - it: "should require redirect_uris with the implicit grant"
+    set:
+      request:
+        grant_types:
+          - implicit
+    asserts:
+      - failedTemplate:
+          errorPattern: "at '/request': missing property 'redirect_uris'"
+
+  - it: "should send the redirect_uris of a client signing users in"
+    set:
+      request:
+        grant_types:
+          - authorization_code
+        redirect_uris:
+          - "http://example.com/oauth2/callback"
+    asserts:
+      - documentIndex: 2
+        contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: REQUEST
+            value: '{"grant_types":["authorization_code"],"redirect_uris":["http://example.com/oauth2/callback"]}'
+
+  - it: "should not require redirect_uris for a client_credentials client"
+    set:
+      request:
+        grant_types:
+          - client_credentials
+    asserts:
+      - documentIndex: 2
+        contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: REQUEST
+            value: '{"grant_types":["client_credentials"]}'

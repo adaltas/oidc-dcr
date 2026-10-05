@@ -48,6 +48,7 @@
       "properties": {
         "redirect_uris": {
           "type": "array",
+          "description": "Required when grant_types contains authorization_code or implicit, or is omitted (authorization_code by default).",
           "uniqueItems": true,
           "items": { "type": "string", "format": "uri" }
         },
@@ -144,7 +145,14 @@
         "scope": { "type": "string" }
       },
       "additionalProperties": false,
-      "required": ["redirect_uris"],
+      "if": {
+        "properties": {
+          "grant_types": {
+            "contains": { "enum": ["authorization_code", "implicit"] }
+          }
+        }
+      },
+      "then": { "required": ["redirect_uris"] },
       "default": {}
     },
     "tls": {
