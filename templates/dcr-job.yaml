@@ -30,6 +30,8 @@ metadata:
 data:
   register.sh: |
 {{ .Files.Get "scripts/register.sh" | indent 4 }}
+  wait.sh: |
+{{ .Files.Get "scripts/wait.sh" | indent 4 }}
 ---
 apiVersion: batch/v1
 kind: Job
@@ -54,20 +56,20 @@ spec:
         - name: wait-oidc-provider
           image: {{ include "image" $ | quote }}
           imagePullPolicy: {{ $.Values.image.pull_policy }}
-          command:
-            - /bin/sh
-            - -c
-            - |-
-              {{- include "wait.script" $ | nindent 14 }}
+          command: ["/bin/sh", "/mnt/dcr/wait.sh"]
           env:
             - name: OIDC_DISCOVERY_URL
               value: {{ . | quote }}
             - name: WAIT_TTL_SECONDS
               value: {{ $.Values.wait_for_provider.ttl_seconds | int | quote }}
             - name: CURL_OPTION
-              value: {{ include "curl.option" $ | quote }}
+              value: {{ ternary "-sk" "-s" $.Values.tls.insecure | quote }}
           volumeMounts:
-            {{- include "volume_mounts" $ | nindent 12 }}
+            - name: dcr-volume
+              mountPath: /mnt/dcr
+              {{- if include "volume_mount.tls" $ }}
+              {{- include "volume_mount.tls" $ | nindent 12 -}}
+              {{- end }}
       {{- end }}
       containers:
         - name: register
@@ -86,13 +88,17 @@ spec:
             - name: SECRET_KEYS
               value: {{ include "secret.keys" . | fromYaml | toJson | quote }}
             - name: CURL_OPTION
-              value: {{ include "curl.option" . | quote }}
+              value: {{ ternary "-sk" "-s" .Values.tls.insecure | quote }}
             {{- if (ne .Values.tls.certificate "") }}
             - name: TLS_CERTIFICATE
               value: {{ .Values.tls.certificate | quote }}
             {{- end }}
           volumeMounts:
-            {{- include "volume_mounts" . | nindent 12 }}
+            - name: dcr-volume
+              mountPath: /mnt/dcr
+              {{- if include "volume_mount.tls" . }}
+              {{- include "volume_mount.tls" . | nindent 12 -}}
+              {{- end }}
           ports:
             - containerPort: 80
               name: http
@@ -109,7 +115,7 @@ spec:
           configMap:
             defaultMode: 493
             name: {{ include "dcr.name" . }}
-        {{- if include "volume.secret" . }}
-        {{- include "volume.secret" . | nindent 8 -}}
+        {{- if include "volume.tls" . }}
+        {{- include "volume.tls" . | nindent 8 -}}
         {{- end }}
       restartPolicy: Never

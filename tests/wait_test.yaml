@@ -58,8 +58,11 @@ tests:
               subPath: ca.crt
       - documentIndex: 2
         equal:
-          path: spec.template.spec.initContainers[0].command[1]
-          value: "-c"
+          path: spec.template.spec.initContainers[0].command
+          value: ["/bin/sh", "/mnt/dcr/wait.sh"]
+      - documentIndex: 1
+        exists:
+          path: data["wait.sh"]
 
   - it: "should use the insecure curl option of the job"
     set:

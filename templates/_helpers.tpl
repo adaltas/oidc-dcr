@@ -40,7 +40,7 @@
 {{- end }}
 {{- end -}}
 
-{{- define "volume_mount.secret" -}}
+{{- define "volume_mount.tls" -}}
 {{- if and (not .Values.tls.insecure) (ne .Values.tls.certificate "") -}}
 - name: ca-volume
   mountPath: /usr/local/share/ca-certificates/ca.crt
@@ -48,41 +48,7 @@
 {{- end -}}
 {{- end -}}
 
-{{/*
-  Volume mounts of the job containers: the registration script, and the CA
-  certificate when one is configured.
-*/}}
-{{- define "volume_mounts" -}}
-- name: dcr-volume
-  mountPath: /mnt/dcr
-{{- with include "volume_mount.secret" . }}
-{{ . }}
-{{- end }}
-{{- end -}}
-
-{{- define "curl.option" -}}
-{{- if .Values.tls.insecure -}}-sk{{- else -}}-s{{- end -}}
-{{- end -}}
-
-{{/*
-  Script of the wait-oidc-provider init container: polls the OIDC discovery URL
-  every 5 seconds, for up to WAIT_TTL_SECONDS seconds, until it answers with
-  JSON. The registration script does not check the HTTP status of its request:
-  while the provider starts, it would read an error page (e.g. the 503 of an
-  ingress) as a response and fail on it.
-*/}}
-{{- define "wait.script" -}}
-if [ -f /usr/local/share/ca-certificates/ca.crt ]; then CURL_OPTION="$CURL_OPTION --cacert /usr/local/share/ca-certificates/ca.crt"; fi
-deadline=$(($(date +%s) + WAIT_TTL_SECONDS))
-until curl $CURL_OPTION -f "$OIDC_DISCOVERY_URL" | jq -e .issuer >/dev/null 2>&1; do
-  if [ "$(date +%s)" -ge "$deadline" ]; then echo "ERROR: $OIDC_DISCOVERY_URL did not answer in $WAIT_TTL_SECONDS seconds"; exit 1; fi
-  echo "INFO: waiting for the OIDC provider ($OIDC_DISCOVERY_URL)"
-  sleep 5
-done
-echo "INFO: OIDC provider ready"
-{{- end -}}
-
-{{- define "volume.secret" -}}
+{{- define "volume.tls" -}}
 {{- if and (not .Values.tls.insecure) (ne .Values.tls.certificate "") -}}
 - name: ca-volume
   secret:
