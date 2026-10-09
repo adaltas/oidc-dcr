@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.1](https://github.com/adaltas/oidc-dcr/compare/v0.5.0...v0.5.1) (2026-10-09)
+
+
+### Bug Fixes
+
+* wait for the job pod dns record before registering ([#27](https://github.com/adaltas/oidc-dcr/issues/27)) ([c8e86ce](https://github.com/adaltas/oidc-dcr/commit/c8e86ce94efdca1383494e6ea627f0202779ef30))
+
 ## [0.5.0](https://github.com/adaltas/oidc-dcr/compare/v0.4.0...v0.5.0) (2026-10-05)
 
 
