@@ -9,6 +9,26 @@ if [ -n "$TLS_CERTIFICATE" ]; then
   CURL_OPTION="$CURL_OPTION --cacert $CA_FILE"
 fi
 
+# Reverse DNS wait
+# Providers with a trusted hosts policy reverse-resolve the IP of the caller.
+# The record of the pod IP, published by the headless service, appears after
+# the pod starts.
+# TODO: a failed lookup may be cached by the DNS server (negative cache) and
+# still be served to the provider after the record appears. Add a pause once
+# the issue is reproduced.
+if [ "${DNS_WAIT_TTL_SECONDS:-0}" -gt 0 ] && [ -n "$POD_IP" ]; then
+  deadline=$(($(date +%s) + DNS_WAIT_TTL_SECONDS))
+  until nslookup "$POD_IP" 2>/dev/null | grep -q 'name = ' \
+    || [ "$(date +%s)" -ge "$deadline" ]; do
+    sleep 1
+  done
+  if [ "$(date +%s)" -ge "$deadline" ]; then
+    >&2 echo "ERROR: no reverse DNS record for $POD_IP after $DNS_WAIT_TTL_SECONDS seconds"
+    exit 2
+  fi
+  echo "INFO: reverse DNS record found for $POD_IP"
+fi
+
 # Current registration detection
 secret=$(kubectl get secret "$SECRET_NAME" -o json 2>/dev/null)
 if [ -n "$secret" ] >/dev/null; then

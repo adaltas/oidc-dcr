@@ -1,0 +1,18 @@
+suite: Headless service
+templates:
+  - dcr-job.yaml
+set:
+  registrationUrl: "http://example.com"
+  request:
+    redirect_uris:
+      - "http://example.com/oauth2/callback"
+tests:
+  - it: "should publish the job pod before it is ready"
+    asserts:
+      - documentIndex: 0
+        isKind:
+          of: Service
+      - documentIndex: 0
+        equal:
+          path: spec.publishNotReadyAddresses
+          value: true

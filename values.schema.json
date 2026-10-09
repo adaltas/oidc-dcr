@@ -218,6 +218,20 @@
       "additionalProperties": false,
       "default": {}
     },
+    "waitForDns": {
+      "type": "object",
+      "description": "Wait for the DNS record of the job pod before registering the client.",
+      "properties": {
+        "ttlSeconds": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Maximum duration of the wait in seconds, 0 disables it.",
+          "default": 60
+        }
+      },
+      "additionalProperties": false,
+      "default": {}
+    },
     "mapping": {
       "type": "object",
       "properties": {

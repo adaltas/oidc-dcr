@@ -42,6 +42,11 @@ The Helm chart is configured with the following properties.
   - `ttlSeconds`  
     Maximum duration of the wait, in seconds. When the provider has not answered by then, the init container fails, and the Job retries according to `backoffLimit`. (Default: `600`)
 
+- `waitForDns`  
+  Waits for the reverse DNS record of the Job pod before registering the client.
+  - `ttlSeconds`  
+    Maximum duration of the wait, in seconds. Providers such as Keycloak with its "Trusted Hosts" client registration policy reverse-resolve the IP of the caller. The headless Service publishes the pod as soon as it has an IP, but the record takes a few seconds to appear. The registration script polls the reverse DNS of the pod IP every second until it resolves, then registers the client. When no record shows up in time, the script fails with exit code `2`, and the Job retries according to `backoffLimit`. `0` disables the wait. (Default: `60`)
+
 - `request`  
   The JSON payload sent to the OIDC identity provider during registration is defined under the `request` section. It supports all the standard fields defined in the OpenID Connect Dynamic Client Registration specification, as well as some Keycloak-specific extensions. The most common fields are:
   - `application_type`  

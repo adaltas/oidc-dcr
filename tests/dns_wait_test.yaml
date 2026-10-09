@@ -1,0 +1,36 @@
+suite: Wait for the reverse DNS record
+templates:
+  - dcr-job.yaml
+set:
+  registrationUrl: "http://example.com"
+  request:
+    redirect_uris:
+      - "http://example.com/oauth2/callback"
+tests:
+  - it: "should pass the pod IP and a 60 seconds wait by default"
+    asserts:
+      - documentIndex: 2
+        contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+      - documentIndex: 2
+        contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DNS_WAIT_TTL_SECONDS
+            value: "60"
+
+  - it: "should pass the configured wait duration"
+    set:
+      waitForDns.ttlSeconds: 0
+    asserts:
+      - documentIndex: 2
+        contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DNS_WAIT_TTL_SECONDS
+            value: "0"

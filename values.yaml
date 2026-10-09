@@ -46,6 +46,13 @@ waitForProvider:
   discoveryUrl: ""
   # Maximum duration of the wait in seconds, the init container fails after it
   ttlSeconds: 600
+# Wait for the DNS record of the job pod before registering the client
+waitForDns:
+  # Providers with a trusted hosts policy reverse-resolve the IP of the caller.
+  # The job pod is published by the headless service and polls the reverse DNS
+  # of its IP every second, for up to ttlSeconds, before its first request.
+  # 0 disables the wait
+  ttlSeconds: 60
 # This section is used to create the Kubernetes Secret with the OIDC client information
 mapping:
   useDefault: true # If true, the keys of the defaultKeys section are included in the output along with the keys of the keyMapping section. If false, only the keys of the keyMapping section are included.
