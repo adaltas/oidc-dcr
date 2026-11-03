@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/adaltas/oidc-dcr/compare/v0.5.1...v0.6.0) (2026-11-03)
+
+
+### Features
+
+* bearer token for authenticated registration ([#29](https://github.com/adaltas/oidc-dcr/issues/29)) ([6565be9](https://github.com/adaltas/oidc-dcr/commit/6565be93c135862341e2371b7731f11efc665e50))
+
 ## [0.5.1](https://github.com/adaltas/oidc-dcr/compare/v0.5.0...v0.5.1) (2026-10-09)
 
 
