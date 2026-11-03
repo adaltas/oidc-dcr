@@ -53,11 +53,18 @@ fi
 echo 'INFO: DCR registration'
 echo 'INFO: Request body'
 echo "$REQUEST" | jq . # Log the request for debugging purposes
+# When a registration token is provided (initial access token), it is sent as a
+# bearer token with the registration request.
+if [ -n "$REGISTRATION_TOKEN_FILE" ] && [ -f "$REGISTRATION_TOKEN_FILE" ]; then
+  REGISTRATION_TOKEN=$(cat "$REGISTRATION_TOKEN_FILE")
+  echo 'INFO: Using initial access token for authenticated registration'
+fi
 # shellcheck disable=SC2086
 response=$(curl $CURL_OPTION \
-  -H "Content-Type:application/json" \
-  -d "$REQUEST" \
-  "$DCR_REGISTRATION_URL")
+    -H "Content-Type:application/json" \
+    ${REGISTRATION_TOKEN:+"-H" "Authorization: Bearer $REGISTRATION_TOKEN"} \
+    -d "$REQUEST" \
+    "$DCR_REGISTRATION_URL")
 [ $? != "0" ] && {
   >&2 echo "ERROR: Client registration HTTP request failed with exit code $?."
   exit 1

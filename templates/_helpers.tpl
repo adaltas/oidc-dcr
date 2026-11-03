@@ -56,6 +56,25 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "volume_mount.registrationToken" -}}
+{{- if ne (.Values.registrationToken.secretName | default "") "" -}}
+- name: registration-token
+  mountPath: /mnt/registration-token
+  readOnly: true
+{{- end -}}
+{{- end -}}
+
+{{- define "volume.registrationToken" -}}
+{{- if ne (.Values.registrationToken.secretName | default "") "" -}}
+- name: registration-token
+  secret:
+    secretName: {{ .Values.registrationToken.secretName }}
+    items:
+      - key: {{ .Values.registrationToken.secretKey | default "token" }}
+        path: token
+{{- end -}}
+{{- end -}}
+
 {{/*
   Hooks are added to ensure that:
     - The DCR related resources are created before the job is executed

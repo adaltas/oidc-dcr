@@ -155,6 +155,24 @@
       "then": { "required": ["redirect_uris"] },
       "default": {}
     },
+    "registrationToken": {
+      "type": "object",
+      "description": "Bearer token for authenticated registration (initial access tokens). When secretName is set, the Job reads the token from the named Secret and sends it as an Authorization header with the DCR request.",
+      "properties": {
+        "secretName": {
+          "type": "string",
+          "description": "Name of the Secret that holds the initial access token.",
+          "default": ""
+        },
+        "secretKey": {
+          "type": "string",
+          "description": "Key within the Secret (e.g. \"token\").",
+          "default": ""
+        }
+      },
+      "additionalProperties": false,
+      "default": {}
+    },
     "tls": {
       "type": "object",
       "properties": {

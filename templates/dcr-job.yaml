@@ -102,11 +102,18 @@ spec:
             - name: TLS_CERTIFICATE
               value: {{ .Values.tls.certificate | quote }}
             {{- end }}
+            {{- if ne (.Values.registrationToken.secretName | default "") "" }}
+            - name: REGISTRATION_TOKEN_FILE
+              value: /mnt/registration-token/token
+            {{- end }}
           volumeMounts:
             - name: dcr-volume
               mountPath: /mnt/dcr
               {{- if include "volume_mount.tls" . }}
               {{- include "volume_mount.tls" . | nindent 12 -}}
+              {{- end }}
+              {{- if include "volume_mount.registrationToken" . }}
+              {{- include "volume_mount.registrationToken" . | nindent 12 -}}
               {{- end }}
           ports:
             - containerPort: 80
@@ -126,5 +133,8 @@ spec:
             name: {{ include "dcr.name" . }}
         {{- if include "volume.tls" . }}
         {{- include "volume.tls" . | nindent 8 -}}
+        {{- end }}
+        {{- if include "volume.registrationToken" . }}
+        {{- include "volume.registrationToken" . | nindent 8 -}}
         {{- end }}
       restartPolicy: Never
