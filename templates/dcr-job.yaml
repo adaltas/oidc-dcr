@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "dcr.headless" . }}
+  name: {{ printf "%s-headless" (include "dcr.name" .) | trunc 63 | trimSuffix "-" }}
   {{- with .Values.commonLabels }}
   labels:
     {{- toYaml . | nindent 4 }}
@@ -70,8 +70,10 @@ spec:
           volumeMounts:
             - name: dcr-volume
               mountPath: /mnt/dcr
-              {{- if include "volume_mount.tls" $ }}
-              {{- include "volume_mount.tls" $ | nindent 12 -}}
+              {{- if and (not $.Values.tls.insecure) (ne $.Values.tls.certificate "") }}
+            - name: ca-volume
+              mountPath: /usr/local/share/ca-certificates/ca.crt
+              subPath: ca.crt
               {{- end }}
       {{- end }}
       containers:
@@ -81,7 +83,7 @@ spec:
           command: ["/bin/sh", "/mnt/dcr/register.sh"]
           env:
             - name: SECRET_NAME
-              value: {{ include "secret.name" . | quote }}
+              value: {{ .Values.secret | default .Release.Name | trunc 63 | trimSuffix "-" | quote }}
             - name: NAMESPACE
               value: {{ .Release.Namespace | quote }}
             - name: DCR_REGISTRATION_URL
@@ -89,7 +91,7 @@ spec:
             - name: REQUEST
               value: {{ .Values.request | toJson | quote }}
             - name: SECRET_KEYS
-              value: {{ include "secret.keys" . | fromYaml | toJson | quote }}
+              value: {{ merge .Values.mapping.keyMapping (ternary .Values.mapping.defaultKeys dict .Values.mapping.useDefault) | toJson | quote }}
             - name: CURL_OPTION
               value: {{ ternary "-sk" "-s" .Values.tls.insecure | quote }}
             - name: POD_IP
@@ -109,11 +111,15 @@ spec:
           volumeMounts:
             - name: dcr-volume
               mountPath: /mnt/dcr
-              {{- if include "volume_mount.tls" . }}
-              {{- include "volume_mount.tls" . | nindent 12 -}}
+              {{- if and (not .Values.tls.insecure) (ne .Values.tls.certificate "") }}
+            - name: ca-volume
+              mountPath: /usr/local/share/ca-certificates/ca.crt
+              subPath: ca.crt
               {{- end }}
-              {{- if include "volume_mount.registrationToken" . }}
-              {{- include "volume_mount.registrationToken" . | nindent 12 -}}
+              {{- if ne (.Values.registrationToken.secretName | default "") "" }}
+            - name: registration-token
+              mountPath: /mnt/registration-token
+              readOnly: true
               {{- end }}
           ports:
             - containerPort: 80
@@ -131,10 +137,17 @@ spec:
           configMap:
             defaultMode: 493
             name: {{ include "dcr.name" . }}
-        {{- if include "volume.tls" . }}
-        {{- include "volume.tls" . | nindent 8 -}}
+        {{- if and (not .Values.tls.insecure) (ne .Values.tls.certificate "") }}
+        - name: ca-volume
+          secret:
+            secretName: {{ .Values.tls.certificate }}
         {{- end }}
-        {{- if include "volume.registrationToken" . }}
-        {{- include "volume.registrationToken" . | nindent 8 -}}
+        {{- if ne (.Values.registrationToken.secretName | default "") "" }}
+        - name: registration-token
+          secret:
+            secretName: {{ .Values.registrationToken.secretName }}
+            items:
+              - key: {{ .Values.registrationToken.secretKey | default "token" }}
+                path: token
         {{- end }}
       restartPolicy: Never
