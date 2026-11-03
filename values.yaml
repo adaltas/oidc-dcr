@@ -16,6 +16,12 @@ registrationUrl: ""
 # redirect_uris is required when grant_types contains authorization_code or
 # implicit, or is omitted (authorization_code by default)
 request: {}
+# Bearer token for authenticated registration (initial access tokens). When set,
+# the Job reads the token from the named Secret and sends it as an Authorization
+# header with the DCR request. The Secret must exist in the release namespace.
+registrationToken:
+  secretName: "" # Name of the Secret that holds the token
+  secretKey: ""  # Key within the Secret (e.g. "token")
 # Informations use to call DCR API
 tls:
   insecure: false # Call the DCR API using insecure option of the curl command

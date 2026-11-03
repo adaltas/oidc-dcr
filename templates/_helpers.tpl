@@ -1,7 +1,3 @@
-{{- define "secret.name" -}}
-{{- .Values.secret | default .Release.Name | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-
 {{- define "image" -}}
 {{- $name := printf "%s:%s" .Values.image.repository (.Values.image.tag | default .Chart.Version) -}}
 {{- if .Values.image.registry -}}
@@ -18,42 +14,11 @@
 {{- define "dcr.name" -}}
 {{- .Values.fullnameOverride | default "dcr" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
-{{- define "dcr.headless" -}}
-{{- printf "%s-headless" (include "dcr.name" .) | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-
 {{- define "service_account.name" -}}
 {{- .Values.security.serviceAccount | default .Values.fullnameOverride | default .Chart.Name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 {{- define "role.name" -}}
 {{- .Values.security.role | default .Values.fullnameOverride | default .Chart.Name | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-
-{{- define "secret.keys" -}}
-{{- if eq .Values.mapping.useDefault true }}
-{{- range $key, $val := .Values.mapping.defaultKeys }}
-{{ $key }}: {{ $val | quote }}
-{{- end }}
-{{- end }}
-{{- range $key, $val := .Values.mapping.keyMapping }}
-{{ $key }}: {{ $val | quote }}
-{{- end }}
-{{- end -}}
-
-{{- define "volume_mount.tls" -}}
-{{- if and (not .Values.tls.insecure) (ne .Values.tls.certificate "") -}}
-- name: ca-volume
-  mountPath: /usr/local/share/ca-certificates/ca.crt
-  subPath: ca.crt
-{{- end -}}
-{{- end -}}
-
-{{- define "volume.tls" -}}
-{{- if and (not .Values.tls.insecure) (ne .Values.tls.certificate "") -}}
-- name: ca-volume
-  secret:
-    secretName: {{ $.Values.tls.certificate }}
-{{- end -}}
 {{- end -}}
 
 {{/*
